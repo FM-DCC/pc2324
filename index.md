@@ -128,5 +128,5 @@ By final exam.
    
 
 
-Edit the content of this page [here](https://github.com/FM-DCC/cp2324/blob/main/index.md).
+Edit the content of this page [here](https://github.com/FM-DCC/pc2324/blob/main/index.md).
 {: .editNote}
