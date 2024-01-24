@@ -96,7 +96,7 @@ Distributed evaluation will include both modelling (EM) and program implementati
 # Lecturers
 
   - 
-    + ![Nelma Moreira's photo](../assets/img/photos/nam.jpg)
+    + ![Nelma Moreira's photo](assets/img/photos/nam.jpg)
     + <a></a>
       * [Nelma Moreira](https://www.dcc.fc.up.pt/~nam/)
       * <a></a>
@@ -107,7 +107,7 @@ Distributed evaluation will include both modelling (EM) and program implementati
       {: .myMemberSubItems}
     {: .myMemberItems}
   - 
-    + ![José Proença's photo](../assets/img/photos/jp.jpg)
+    + ![José Proença's photo](assets/img/photos/jp.jpg)
     + <a></a>
       * [José Proença](https://jose.proenca.org)
       * <a></a>
