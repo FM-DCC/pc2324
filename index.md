@@ -1,22 +1,12 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: home
 # title: Concurrent Programming 23/24 (CC3037)
 ---
-
-
-<!--   <h1 class="intro-title--">
-    About
-  </h1>
- -->
 
 The goal of this course is to introduce students to the fundamental theoretic and practical principals of concurrency, with emphasis on the correctness, design and implementation of models of concurrent computation using shared memory architectures.
 
  - __The 1st part__ of the course is more fundamental and is hosted [here](https://www.dcc.fc.up.pt/~nam/Teaching/progcon2324/index.php).
  - __This 2nd part__ of the course will focus on the programming aspect, using the Scala language to study several concurrency patterns and libraries in Java Virtual Machines.
-
 
 
 The official plan of this course is hosted in FCUP [here](https://sigarra.up.pt/fcup/en/UCURR_GERAL.FICHA_UC_VIEW?pv_ocorrencia_id=445522).
@@ -26,6 +16,7 @@ The official plan of this course is hosted in FCUP [here](https://sigarra.up.pt/
 
 - __4 Apr 24__: tbd
 <!-- Introduction ([1-intro.pdf](slides/1-intro.pdf)) -->
+
 
 # Literature and Material
 
@@ -41,10 +32,8 @@ The official plan of this course is hosted in FCUP [here](https://sigarra.up.pt/
 
 - (2018/19): [https://www.dcc.fc.up.pt/~nam/Teaching/procon20/](https://www.dcc.fc.up.pt/~nam/Teaching/procon20/)
   
-<!-- also companion slides, structured by lecture:
-  https://dspace.mit.edu/bitstream/handle/1721.1/36847/6-046JFall-2001/OcwWeb/Electrical-Engineering-and-Computer-Science/6-046JIntroduction-to-AlgorithmsFall2001/LectureNotes/index.htm -->
-
-<!-- ### Complementary Bibliography
+<!-- 
+### Complementary Bibliography
 
 - ...
  -->
@@ -59,6 +48,7 @@ The lectures mix the presentation of new material (introducing concepts, main al
 The homework focus is on practical application of algorithmic concepts, consolidating the learned material. 
 
 The final exam and intermediate tests (closed book), globally evaluates the knowledge acquired by the students.
+
 
 # Evaluation Type
 
@@ -93,6 +83,7 @@ Distributed evaluation will include both modelling (EM) and program implementati
 
  - __FG__ = 4 * EM + 4 * EI + 12 * FE.
 
+
 # Lecturers
 
   - 
@@ -120,11 +111,6 @@ Distributed evaluation will include both modelling (EM) and program implementati
   {: .myMembers}
 
 
-<!--
-# Classification improvement
-
-By final exam.
--->
    
 
 
