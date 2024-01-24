@@ -127,11 +127,6 @@ By final exam.
 -->
    
 
-# Contact
-
-The day and time for _appointments_ is Friday afternoon ([José Proença](https://jose.proenca.org)). Please
-email me the day before if you wish to meet. If you prefer you
-can also just send an email with your questions to [José Proença](mailto:jose.proenca@fc.up.pt), or we can try to book an online meeting[.](https://github.com/cister-labs/alg2324)
 
 Edit the content of this page [here](https://github.com/FM-DCC/cp2324/blob/main/index.md).
 {: .editNote}
