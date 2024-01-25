@@ -1,0 +1,326 @@
+\usepackage{transparent}
+\usepackage{xspace}
+\usepackage{listings}
+\usepackage{pdfpages}
+\usepackage{relsize}
+
+%%%%%%%%%%%%% Macros
+% \newcommand{\Ban}{\catfont{Ban}}
+% \newcommand{\Cats}{\catfont{Cat}}
+
+%%%% Misc
+%% Operations
+\newcommand{\sem}[1]{\llbracket #1 \rrbracket}
+\DeclareMathOperator{\img}{\mathrm{im}}
+\DeclareMathOperator{\dom}{\mathrm{dom}}
+\DeclareMathOperator{\codom}{\mathrm{codom}}
+%% Sets of numbers
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Nats}{\mathbb{N}}
+\newcommand{\Reals}{\mathbb{R}}
+\newcommand{\Rz}{\Reals_{\geq 0}}
+\newcommand{\Complex}{\mathbb{C}}
+%% Writing
+\newcommand{\cf}{\emph{cf.}}
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\df}[1]{\emph{\textbf{#1}}}
+%%%%%%%%%%%%%%%% End of Misc
+
+%%%% Programming Stuff
+%% Types
+\newcommand{\typefont}[1]{\mathbb{#1}}
+\newcommand{\typeOne}{1}
+\newcommand{\typeTwo}{2}
+\newcommand{\typeA}{\typefont{A}}
+\newcommand{\typeX}{\typefont{X}}
+\newcommand{\typeB}{\typefont{B}}
+\newcommand{\typeC}{\typefont{C}}
+\newcommand{\typeV}{\typefont{V}}
+\newcommand{\typeD}{\typefont{D}}
+\newcommand{\typeI}{\typefont{I}}
+%% RuleName
+\newcommand{\rulename}[1]{(\mathrm{#1})}
+%% Sequents
+\newcommand{\jud}{\vdash}
+\newcommand{\vljud}{\rhd}
+\newcommand{\cojud}{\vdash_{\co}}
+\newcommand{\vl}{\mathtt{v}}
+\newcommand{\co}{\mathtt{c}}
+% Program font
+\newcommand{\prog}[1]{\mathtt{#1}}
+\newcommand{\pseq}[3]{#1 \leftarrow #2; #3}
+\newcommand{\ppm}[4]{(#1,#2) \leftarrow #3; #4}
+\newcommand{\pinl}[1]{\prog{inl}(#1)}
+\newcommand{\pinr}[1]{\prog{inr}(#1)}
+\newcommand{\pcase}[4]{\prog{ case } #1 \prog{ of } \pinl{#2} \Rightarrow #3 ; \pinr{#2} \Rightarrow #4}
+%% Sets of terms
+\newcommand{\ValuesBP}[2]{\mathsf{Values}(#1, #2)}
+\newcommand{\TermsBP}[2]{\mathsf{Terms}(#1, #2)}
+\newcommand{\closValP}[1]{\ValuesBP{\emptyset}{#1}}
+\newcommand{\closTermP}[1]{\TermsBP{\emptyset}{#1}}
+\newcommand{\closVal}{\closValP{\typeA}}
+\newcommand{\closTerm}{\closTermP{\typeA}}
+%% Contextual equivalence
+\newcommand{\ctxeq}{\equiv_{\prog{ctx}}}
+%%%% End of Programming Stuff
+
+
+% Misc by José
+\newcommand{\wrap}[2][]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+\newcommand{\mwrap}[1]{\ensuremath{\begin{array}{@{}c@{}}#1\end{array}}}
+\def\trans#1{\xrightarrow{#1}}  % - a - > 
+\def\Trans#1{\stackrel{#1}{\Longrightarrow}} % =a=> 
+\newcommand{\transp}[2][35]{\color{fg!#1}#2}
+\newcommand{\transpt}[2][.35]{\tikz{\node[inner sep=1pt,fill opacity=0.5]{#2}}}
+\newcommand{\faded}[2][0.4]{{\transparent{#1}#2}} % alternative to "transp" using transparent package
+\newcommand{\set}[1]{\left\{ #1 \right\}} % {a,b,...z}
+\newcommand{\mi}[1]{\ensuremath{\mathit{#1}}\xspace}
+\newcommand{\mf}[1]{\ensuremath{\mathsf{#1}}\xspace}
+% \newcommand{\gold}[1]{\textcolor{darkgoldenrod}{#1}\xspace}
+
+
+%------ using color ---------------------------------------------------------
+\definecolor{goldenrod}{rgb}{.80392 .60784 .11373}
+\definecolor{darkgoldenrod}{rgb}{.5451 .39608 .03137}
+\definecolor{brown}{rgb}{.15 .15 .15}
+\definecolor{darkolivegreen}{rgb}{.33333 .41961 .18431}
+\definecolor{myGray}{gray}{0.85}
+%
+%
+\newcommand{\red}[1]{\textcolor{red!80!black}{#1}\xspace}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}\xspace}
+\newcommand{\gold}[1]{\textcolor{darkgoldenrod}{#1}\xspace}
+\newcommand{\gray}[1]{\textcolor{myGray}{#1}\xspace}
+% \def\alert#1{{\darkgoldenrod #1}}
+% \def\alert#1{{\alert{#1}}}
+%\def\brw#1{{\brown #1}}
+% \def\structure#1{{\blue #1}}
+% \def\tstructure#1{\textbf{\darkblue #1}}
+%%\def\gre#1{{\green #1}}
+\def\gre#1{{\darkolivegreen #1}}
+\def\gry#1{{\textcolor{gray}{#1}}}
+\def\rdb#1{{\red #1}}
+\def\st{\mathbf{.}\,}
+\def\laplace#1#2{*\txt{\mbox{ \fcolorbox{black}{myGray}{$\begin{array}{c}\mbox{#1}\\\\#2\\\\\end{array}$} }}}
+%\newcommand{\galois}[2]{#1\; \dashv\; #2}
+
+
+
+\def\ainv#1{\overline{#1}}
+\def\aconv#1{#1^{\circ}} 
+\def\rtran#1{\stackrel{#1}{\longrightarrow}}
+\def\pair#1{\langle #1 \rangle}
+\def\setdef#1#2{\mathopen{\{} #1 \asor #2 \mathclose{\}}}
+\def\imp{\mathbin{\Rightarrow}}
+\def\dimp{\mathbin{\Leftrightarrow}}
+\def\rimp{\mathbin{\Leftarrow}}
+\def\rra{\longrightarrow}
+% \def\rcb#1#2#3#4{\def\nothing{}\def\range{#3}\mathopen{\langle}#1 \ #2 \ \ifx\range\nothing::\else: \ #3 :\fi \ #4\mathclose{\rangle}}
+\def\abv{\stackrel{\rm abv}{=}}
+
+
+
+% Spliting frames in 2 columns
+\newcommand{\frsplit}[3][.48]{
+  \begin{columns}%[T] % align columns
+  \begin{column}{#1\textwidth} #2 \end{column} ~~~
+  \begin{column}{#1\textwidth} #3 \end{column} \end{columns}
+}
+\newcommand{\frsplitdiff}[5][]{
+  \begin{columns}[#1]%[T] % align columns
+  \begin{column}{#2\textwidth} #4 \end{column} ~~~
+  \begin{column}{#3\textwidth} #5 \end{column} \end{columns}
+}
+\newcommand{\frsplitt}[3][.48]{
+  \begin{columns}[T] % align columns
+  \begin{column}{#1\textwidth} #2 \end{column} ~~~
+  \begin{column}{#1\textwidth} #3 \end{column} \end{columns}
+}
+\newcommand{\col}[2][.48]{\begin{column}{#1\textwidth} #2 \end{column}}
+\newcommand{\colb}[3][.48]{\begin{column}{#1\textwidth} \begin{block}{#2} #3 \end{block} \end{column}}
+
+% Spliting frames in 3 columns
+\newcommand{\frsplitthree}[4][.31]{
+  \begin{columns}%[T] % align columns
+  \begin{column}{#1\textwidth} #2 \end{column} ~~~
+  \begin{column}{#1\textwidth} #3 \end{column} ~~~
+  \begin{column}{#1\textwidth} #4 \end{column} \end{columns}
+}
+\newcommand{\frsplitdiffthree}[7][]{
+  \begin{columns}[#1]%[T] % align columns
+  \begin{column}{#2\textwidth} #5 \end{column} ~~~
+  \begin{column}{#3\textwidth} #6 \end{column} ~~~
+  \begin{column}{#4\textwidth} #7 \end{column} \end{columns}
+}
+\newcommand{\frsplittthree}[4][.32]{
+  \begin{columns}[T] % align columns
+  \begin{column}{#1\textwidth} #2 \end{column} ~
+  \begin{column}{#1\textwidth} #3 \end{column} ~
+  \begin{column}{#1\textwidth} #4 \end{column} \end{columns}
+}
+
+
+\newcommand{\typerule}[4][]{\ensuremath{\begin{array}[#1]{c}\textsf{\scriptsize ({#2})} \\#3 \\\hline\raisebox{-3pt}{\ensuremath{#4}}\end{array}}}
+\newcommand{\styperule}[3][]{\ensuremath{\begin{array}[#1]{c} #2 \\[0.5mm]\hline\raisebox{-4pt}{\ensuremath{#3}}\end{array}}}
+\newcommand{\shrk}{\vspace{-3mm}}
+
+\def\caixa#1{\medskip
+  \begin{center}
+  \fbox{\begin{minipage}{0.9\textwidth}\protect{#1}\end{minipage}}
+  \end{center}}
+
+\newcommand{\mybox}[2][0.9]{
+  \begin{minipage}{#1\textwidth}\begin{block}{}\centering #2\end{block}\end{minipage}}
+\newcommand{\mycbox}[2][0.9]{
+  {\\[-5mm]\centering\mybox[#1]{#2}\\[-5mm]}}
+
+%%%%% Tikz
+% \usetikzlibrary{arrows.meta, calc, fit, tikzmark}
+\usetikzlibrary{%
+  positioning
+ ,patterns
+ ,arrows
+ ,arrows.meta
+ ,automata
+ ,calc
+ ,shapes
+ ,fit
+ ,tikzmark
+ ,fadings
+ ,decorations.pathreplacing
+ ,plotmarks
+% ,pgfplots.groupplots
+ ,decorations.markings
+}
+% \tikzset{shorten >=1pt,node distance=2cm,on grid,auto,initial text={},inner sep=2pt}
+\tikzstyle{aut}=[shorten >=1pt,node distance=2cm,on grid,auto,initial text={},inner sep=2pt]
+\tikzstyle{st}=[circle,draw=black,fill=black!10,inner sep=3pt]
+\tikzstyle{sst}=[rectangle,draw=none,fill=none,inner sep=3pt]
+\tikzstyle{final}=[accepting]
+
+%%% Uppaal-like diagrams
+\newcommand{\uppbox}[3][20mm]{\tikz{
+  \node[black!15,fill=black!15,minimum width=#1,align=left](title){\textbf{{\footnotesize #2}}};
+  \node[black!15,fill=black!15,left,xshift=4mm]at(title.east){\textbf{{\footnotesize #2}}};
+  \node[blue!60!cyan,right] at(title.west){\textbf{{\footnotesize #2}}};
+  \node[below,inner sep=2mm,fill=white,xshift=2mm](box)at(title.south){\includegraphics[width=#1]{#3}};
+  \node[fit=(title)(box),draw=black,inner sep=0pt]{};
+}}
+
+\newcommand{\uppboxv}[3][20mm]{\tikz{
+  \node[below,inner sep=2mm,fill=white](box){\includegraphics[height=#1]{#3}};
+  \coordinate[yshift=5mm](top)at(box.north);
+  \node[fit=(top)(box.north west)(box.north east),inner sep=0pt,fill=black!15](title){};
+  \node[blue!60!cyan,right] at(title.west){\textbf{{\footnotesize #2}}};
+  \node[fit=(title)(box),draw=black,inner sep=0pt]{};
+}}
+
+
+%% COnfiguring Listings
+\lstset{ % basic style
+  language=scala,
+  basicstyle=\ttfamily\scriptsize,
+  breakatwhitespace=true,
+  breaklines=true,
+  mathescape,
+  % morecomment=[l]{//},
+  % morecomment=[n]{/*}{*/},
+  % frame=single,                    % adds a frame around the code
+  rulecolor=\color{black!40},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  xleftmargin=1.5mm,
+  xrightmargin=1.5mm,
+  backgroundcolor=\color{black!5},
+  % line numbers
+%  numbers=left,  % where to put the line-numbers; possible values are (none, left, right)
+ numbersep=5pt, % how far the line-numbers are from the code
+ numberstyle=\tiny\color{gray},   
+ stepnumber=1,  % the step between two line-numbers. If it is 1 each line will be numbered      
+%  xleftmargin=3mm,
+%  xrightmargin=1.5mm,
+%%%%%
+  captionpos=b, % t or b (top or bottom)
+  belowcaptionskip=5mm,
+%%%%%
+  % alsoletter={-},
+  % emphstyle=\ttfamily\color{blue}, %\underbar,
+  % emphstyle={[2]\ttfamily\color{green!50!black}},
+  emphstyle=\bfseries\itshape\color{blue!80!black},       % moreemph={...} - layer keywords
+  emphstyle={[2]\itshape\color{red!70!black}},%\underbar} % moreemph={[2]...} - inner keywords
+  %
+  keywordstyle=\bf\ttfamily\color{red!50!black},
+  commentstyle=\sl\ttfamily\color{gray!70},
+  % commentstyle=\color{green!60!black},
+  stringstyle=\ttfamily\color{green!60!black},
+  morestring=[b]",
+  % morecomment=[l]{\#},
+  frame=single,
+  % numberstyle=\tiny, numbers=left, stepnumber=1, firstnumber=1, numberfirstline=true,
+  %emph={act,proc,init,sort,map,var,eqn},
+  %emph={[2]block,hide,comm,rename,allow,||,<>,sum,&&,=>,true,false},
+  % literate=*{->}{{{\color{red!70!black}$\to$}}}{1}
+  %            {.}{{{\color{red!70!black}.}}}{1}
+  %            {+}{{{\color{red!70!black}\hspace*{1pt}+\hspace*{1pt}}}}{1}
+  %            {|}{{{\color{red!70!black}|}}}{1}
+  %            {||}{{{\color{red!70!black}|\!\!|}}}{1}
+  %            {*}{{{\color{red!70!black}*}}}{1}
+  %            {\#}{{{\color{red!70!black}\#}}}{1}
+  %            {&}{{{\color{red!70!black}\&}}}{1}
+  %            {:=}{{{\color{red!70!black}:=}}}{1}
+  %            {=>}{{{\color{red!70!black}=>}}}{1}
+  %            % {>}{{{\color{green!65!black}\hspace*{1pt}>\hspace*{1.5pt}}}}{2}
+  %            % {<}{{{\color{green!65!black}\hspace*{1.5pt}<\hspace*{1pt}}}}{2}
+  %            % {]}{{{\color{green!65!black}\hspace*{1pt}]\hspace*{1.5pt}}}}{1}
+  %            % {[}{{{\color{green!65!black}\hspace*{1.5pt}[\hspace*{1pt}}}}{1}
+  %            {>}{{{\color{green!65!black}>}}}{1}
+  %            {<}{{{\color{green!65!black}<}}}{1}
+  %            {]}{{{\color{green!65!black}]}}}{1}
+  %            {[}{{{\color{green!65!black}[}}}{1}
+  %  morekeywords={Merger1,Fifo2,Lossy3,Init1,Init2}
+  % ,emph={act,proc,init,sort,map,var,eqn}
+  % ,emph={[2]block,hide,comm,rename,allow,||,<>,sum,&&,=>}
+}
+
+\lstdefinestyle{tiny}{basicstyle=\ttfamily\relsize{-7}}
+
+% Include slides from others
+\newcommand{\byothers}[3]{{
+\begin{frame}{}~\mycbox{\Large slides by #1\\pages #2}\end{frame}{}
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages=#2]{../../others/#3}
+}}
+
+\newcounter{mypage}
+\newcommand{\fromBook}[6][scale=0.5]{
+\setcounter{mypage}{20}
+\addtocounter{mypage}{#2}
+\begin{tabular}{@{}r@{}}
+\includegraphics[page=\themypage, trim = #3 #4 #5 #6, clip, #1]%
+  {../../learning-concurrent-scala/learning-concurrent-programming-in-scala.pdf}
+  \\[0mm]
+  \textcolor{myGray}{$\left[\begin{array}{@{}r@{}}
+  ~\\[-7mm]
+  \text{{\tiny in \emph{``Learning Concurrent}}}\\[-3mm]
+  \text{{\tiny \emph{Programming in Scala''}, pg.\,#2}}
+  \\[0mm]
+  \end{array}\right]$}
+\end{tabular}
+}
+
+\newcommand{\fromBookW}[4][width=\textwidth]{
+\setcounter{mypage}{20}
+\addtocounter{mypage}{#2}
+\begin{tabular}{@{}r@{}}
+\includegraphics[page=\themypage, trim = 20mm #3 20mm #4, clip, #1]%
+  {../../learning-concurrent-scala/learning-concurrent-programming-in-scala.pdf}
+  \\[-2mm]
+  \textcolor{myGray}{$\left[\begin{array}{@{}r@{}}
+  ~\\[-7mm]
+  \text{{\tiny in \emph{``Learning Concurrent}
+                      \emph{Programming in Scala''}, pg.\,#2}}
+  \\[0mm]
+  \end{array}\right]$}
+\end{tabular}
+}
+

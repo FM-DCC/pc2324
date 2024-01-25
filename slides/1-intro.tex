@@ -1,0 +1,231 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{etex} % fixes new-dimension error
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx,amsmath}
+\usepackage{stmaryrd} % cf. interleave
+\usepackage{booktabs}
+\usepackage{amscd}
+\usepackage{multicol}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{alltt}
+\usepackage{proof}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage[new]{old-arrows}
+\usepackage[all]{xy}
+\usepackage{pgfplots}
+\usepackage{textcomp}
+
+\input{src/macros/macros}
+%-------------- template --------------------------------------------------
+\input{src/macros/beamerconf}
+%----------------------------------------------------------------------------
+
+%------ using pstricks (rnode etc) ------------------------------------------
+% \usepackage{pstricks,pst-node,pst-text,pst-3d}
+
+% % context
+% \AtBeginSection[]
+% {
+%     \begin{frame}
+%         \frametitle{Table of Contents}
+%         \tableofcontents[currentsection]
+%     \end{frame}
+% }
+% \author[Renato Neves]{Renato Neves}
+% % logos of institutions
+% \titlegraphic{
+%   \begin{textblock*}{5cm}(6.7cm,7.45cm)
+%      \includegraphics[scale=0.06]{images/uminho.png}\hspace*{.85cm}~%
+%   \end{textblock*}
+%   \begin{textblock*}{5cm}(9.4cm,7.45cm)
+%     \includegraphics[scale=0.50]{images/haslab.pdf}
+%   \end{textblock*}
+% }
+% % No date
+% \date{}
+
+\begin{document}
+
+% \setLectureBasic{Cyber-Physical Computation}
+\setLecture{1}{Concurrent programming (Module II)}
+
+
+% \section{Concurrent programming (CC3040)}
+
+% \begin{frame}{Concurrent programming (CC3040)}
+%   \centering
+%   Experiment to import figures from the main book below.
+
+%   \fromBook{32}{45mm}{98mm}{43mm}{35mm}
+% %
+%   \fromBookW[scale=0.5]{40}{20mm}{150mm}
+% \end{frame}
+
+
+% int i, j, min_idx;
+% for (i = 0; i < n-1; i++) {
+%   min_idx = i;
+%   for (j = i+1; j < n; j++)
+%     if (arr[j] < arr[min_idx])
+%       min_idx = j;
+%     if(min_idx != i)
+%       swap(&arr[min_idx], &arr[i]);
+% }
+
+
+% int i, j;
+% for (i = 1; i < n; i++) {
+%   j = i - 1;
+%   while (j >= 0 && arr[j] > arr[i]) {
+%       arr[j + 1] = arr[j];
+%       j = j - 1;
+%   }
+%   arr[j + 1] = arr[i];
+% }
+
+
+
+
+
+\section{Contents of this module}
+
+
+\begin{frame}{Contents of the module }
+
+  \begin{block}{Blocks of sequential code running concurrently and sharing memory:}
+    
+  \begin{itemize}
+    \item What is Scala and why using it?
+    \item Concurrency in Java and its memory model
+    \item Basic concurrency blocks and libraries
+    \item Futures and promises
+    \item Actor model (maybe)
+  \end{itemize}
+  \end{block}
+
+  % We will study is a \emph{\textbf{good/better}} algorithm
+  % \begin{itemize}
+  % \item correct (do what is expected and always terminates)
+  % \item fast/faster (does not take forever...)
+  % \end{itemize}
+
+  ~\\
+
+  \frsplitt[0.44]{
+  We will be \alert{\textbf{less formal}}
+  \begin{itemize}
+    \item focus on concepts and programs
+    \item study operators and libraries
+    \item tool support with Scala
+  \end{itemize}
+  }{
+  We will have \alert{\textbf{hands-on}}
+  \begin{itemize}
+    \item Practical programming exercises
+    \item Apply the concepts we see
+  \end{itemize}
+  }
+\end{frame}
+
+
+% \begin{slide}{Syllabus}
+%   \frsplitdiff{0.52}{0.45}{
+%     \begin{itemize}
+%       \item Algorithm Correctness
+%       \item Complexity: worst/best-case analysis
+%       \item Asymptotic analysis
+%       \item Recursive algorithms 
+%       \item Average-case and randomized algorithms
+%     \end{itemize}
+%   }{\!\!\!\!\!
+%     \begin{itemize}
+%       % \item Sorting algorithms
+%       \item Amortized analysis
+%       \item \textcolor{black!30}{Lower bounds}
+%       \item Data structures %Graph traversals and Dynamic programming
+%       \item Fundamentals of NP-completeness
+%       \\~
+%     \end{itemize}
+%   }
+% \end{slide}
+
+
+\section{Logistics}
+
+\begin{frame}{Useful information}
+  Relevant class material and announcements will be posted on the website periodically
+
+  {\centering\mybox[0.8]{\url{https://fm-dcc.github.io/pc2324}}
+
+  }
+
+
+  \alert{Lecturers}
+  \frsplitdiff{0.53}{0.51}{
+    \begin{itemize}
+      \item Nelma Moreira\\\url{https://www.dcc.fc.up.pt/~nam/}
+      \item \href{mailto:nam@fc.up.pt}{nam@fc.up.pt}
+      \item office hours: tbd
+    \end{itemize}
+    }{
+    \begin{itemize}
+      \item \textbf{José Proença}\\\url{https://jose.proenca.org}
+      \item \href{mailto:jose.proenca@fc.up.pt}{jose.proenca@fc.up.pt}
+      \item office hours: Thursday afternoon
+    \end{itemize}
+    }
+           
+   \bigskip
+
+  % \alert{Office hours}
+  \emph{(Please send an email the day before if you wish to meet)}
+  % \frsplitdiff{0.53}{0.51}{
+  %   \begin{itemize}
+  %     \item \emph{Nelma Moreira:} nam@fc.i[/[t]]
+  %   \end{itemize}
+  %   }{
+  %   \begin{itemize}
+  %     \item \emph{\textbf{José Proença:}} jose.proenca@fc.up.pt
+  %   \end{itemize}
+  %   }
+  \end{frame}
+
+\begin{frame}{Grading}
+  Grading will consist of:
+  \begin{itemize}
+  \item \textbf{40\%} (\alert{T1}) -- individual \alert{test} for module I $(\geq 6)$
+  \item \textbf{30\%} (\alert{T2}) -- individual \alert{test} for module II $(\geq 6)$
+  \item \textbf{70\%} (\structure{FE}) -- individual \structure{final exam} for modules I and II
+  \item \textbf{30\%} (\textbf{CW}) -- \textbf{course work} for modules I and II
+    \begin{itemize}
+      \item groups of at most 2 students
+      \item \textbf{10\%} for module I
+      \item \textbf{20\%} for module II
+    \end{itemize}
+  \end{itemize}
+
+  % There will be 2 exam periods:
+  \frsplitt{
+    \begin{exampleblock}{Normal period}\centering
+            % ~\mycbox[0.9]{$\structure{T1}\times0.3 + \structure{T2}\times0.4 + \structure{CW}\times0.3
+            % (\geq 9.5)$}
+            $\alert{T1}\times0.3 + \alert{T2}\times0.4 + \textbf{CW}\times0.3~~~
+            (\geq 9.5)$
+      ~\\[-4mm]
+      Mandatory 25\% attendance in PL
+    \end{exampleblock}
+  }{
+    \begin{alertblock}{Extra period (\emph{recurso})}\centering
+      % ~\mycbox[0.9]{$\structure{FE}\times 0.7 + \structure{CW}\times0.3
+      % (\geq 9.5)$}      
+      $\structure{FE}\times 0.7 + \textbf{CW}\times0.3~~~(\geq 9.5)$
+    \end{alertblock}
+  }
+\end{frame}
+
+% \byothers{Pedro Ribeiro}{4-5}{ribeiro/0_introduction_18092018.pdf}
+\end{document}

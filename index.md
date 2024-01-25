@@ -74,7 +74,7 @@ Distributed evaluation with final exam
 
 # Eligibility for exams
 
-Students must attend at least 75% of the pratical classes to be admitted to the exams.
+Students must attend at least 75% of the practical classes to be admitted to the exams.
 
 
 # Calculation formula of final grade

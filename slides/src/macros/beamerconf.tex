@@ -1,0 +1,159 @@
+ %!TEX root=../../1-intro.tex
+ \usetheme{metropolis}
+\usepackage{appendixnumberbeamer}
+
+%------ Setting lecture info ----------------------------------------------
+\newcounter{lectureID}
+\stepcounter{lectureID}
+\newcommand{\getLecture}{\arabic{lectureID}\xspace}
+\newcommand{\setLectureBasic}[1]{
+  \title{
+    #1
+    }
+  \author{Nelma Moreira ~~\&~~ \textbf{Jos\'{e} Proen\c{c}a}}
+  \institute{CISTER -- U.Porto, Porto, Portugal
+            \hfill 
+            \begin{tabular}{r@{}}
+            \url{https://fm-dcc.github.io/pc2324}
+            \end{tabular}
+            }
+  \date{Concurrent programming (CC3040) 2023/2024}
+  % logos of institutions
+  \titlegraphic{
+    \begin{textblock*}{5cm}(2.0cm,7.00cm)
+       \includegraphics[scale=0.14]{src/img/logos/fcup}\hspace*{.85cm}~%
+    \end{textblock*}
+    \begin{textblock*}{5cm}(6.0cm,7.25cm)
+      \includegraphics[scale=0.43]{src/img/logos/cmup}
+    \end{textblock*}
+    \begin{textblock*}{5cm}(10.4cm,7.45cm)
+      \includegraphics[scale=0.16]{src/img/logos/cister}
+    \end{textblock*}
+  }  
+  \frame[plain]{\titlepage}
+}
+\newcommand{\setLecture}[2]{\setcounter{lectureID}{#1}\setLectureBasic{#1. #2}}
+
+%------ Counters for exercises ----------------------------------------------
+\newcounter{cExercise}
+\newcommand{\exercise}{\stepcounter{cExercise}Ex.\,\arabic{lectureID}.\arabic{cExercise}:\xspace}
+\newcommand{\exerciseBack}{\addtocounter{cExercise}{-1}}
+\newcommand{\exerciseAdd}{\stepcounter{cExercise}}
+\newcommand{\doExercise}[3][0mm]{\begin{exampleblock}{\exercise #2}\wrap{\rule{0pt}{#1}}#3\end{exampleblock}}
+\newcommand{\doSimpleExercise}[2][0mm]{\begin{exampleblock}{}\wrap{\rule{0pt}{#1}}\structure{\textbf{\exercise} #2}\end{exampleblock}}
+
+% Slide
+\newenvironment{slide}[1]{\begin{frame}\frametitle{#1}}{\end{frame}}
+
+
+
+% Base colors (from metropolis theme)
+\definecolor{metDarkBrown}{HTML}{604c38}
+\definecolor{metDarkTeal}{HTML}{23373b}
+\definecolor{metLightBrown}{HTML}{EB811B}
+\definecolor{metLightGreen}{HTML}{14B03D}
+
+ 
+
+\metroset{numbering=fraction,progressbar=frametitle}
+
+% \setbeamercolor*{structure}{fg=blue!80!black}
+\setbeamercolor*{structure}{fg=metLightGreen}
+
+% % \definecolor{MainColour}{rgb}{0., 0.25, 0.8}
+% \colorlet{MainColour}{blue!50!black}
+% \colorlet{BgColour}{blue!10}
+% \colorlet{BarColour}{blue!50!black}
+
+% %\usetheme{CambridgeUS}%{Copenhagen}%{Frankfurt}%{Singapore}%{CambridgeUS}
+% \usecolortheme[named=MainColour]{structure} 
+% \useoutertheme[subsection=false]{miniframes}
+% \useinnertheme{circles}
+% %\useinnertheme[shadow=false]{rounded}
+% \setbeamertemplate{blocks}[rounded][shadow=false]
+
+% \setbeamercovered{transparent} 
+% \setbeamertemplate{navigation symbols}{} %Remove navigation bar
+% \setbeamertemplate{footline}[frame number] % add page number
+% \setbeamercolor{postit}{fg=MainColour,bg=BgColour}
+% \setbeamercolor{structure}{bg=black!10}
+% %\setbeamercolor{palette primary}{use=structure,fg=red,bg=green}
+% %\setbeamercolor{palette secondary}{use=structure,fg=red!75!black,bg=green}
+% \setbeamercolor{palette tertiary}{use=structure,bg=BarColour,fg=white}
+% %\setbeamercolor{palette quaternary}{fg=black,bg=green}
+% %\setbeamercolor{normal text}{fg=black,bg=white}
+% %\setbeamercolor{block title alerted}{fg=red,bg=green}
+% %\setbeamercolor{block title example}{bg=black!10,fg=green}
+\setbeamercolor{block body}{bg=black!5}
+
+% \setbeamercolor{block title alerted}{bg=red!25}
+% \setbeamercolor{block body alerted}{bg=red!10}
+
+% \setbeamercolor{block title example}{bg={rgb:green,2;black,1;white,5}}
+\setbeamercolor{block body example}{bg={rgb:green,2;black,1;white,20}}
+\setbeamercolor{block body alerted}{bg={metLightBrown!25}}
+
+% \setbeamertemplate{itemize item}{\color{black!10}$\blacksquare$}
+\setbeamercolor{itemize item}{fg=metDarkTeal}
+\setbeamercolor{itemize subitem}{fg=metDarkTeal}
+
+\setbeamercolor{graybc}{fg=black,bg=black!10}
+\newcommand{\myblock}[1]{\begin{beamercolorbox}[dp=1ex,center,rounded=true]%
+  {graybc} {\large \textbf{#1}} \end{beamercolorbox}}%
+
+%%%%%%%%%
+
+\definecolor{barcolor}{rgb}{.65,.79,.92} % FCUP color
+
+
+% Configuring the foot line
+\setbeamercolor{author in head/foot}{fg=metDarkTeal, bg=barcolor}%
+\setbeamercolor{date in head/foot}{fg=barcolor!75!black}%
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertsection
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+% No configuration symbols
+\setbeamertemplate{navigation symbols}{}
+
+
+%%%%%%% Custom bar above
+
+\setbeamercolor{frametitle}{bg=barcolor,fg=metDarkTeal}
+\setbeamercolor{progress bar}{fg=barcolor!75!black}
+
+%%% Custom bar with a LOGO
+
+\makeatletter
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip%
+  \begin{beamercolorbox}[%
+      wd=\paperwidth,%
+      sep=0pt,%
+      leftskip=\metropolis@frametitle@padding,%
+      rightskip=\metropolis@frametitle@padding,%
+    ]{frametitle}%
+  \metropolis@frametitlestrut@start%
+  \insertframetitle%
+  \nolinebreak%
+  \metropolis@frametitlestrut@end%
+  \hfill
+  \raisebox{-1.3ex}{\includegraphics[height=4ex,keepaspectratio]{src/img/logos/fcup-bar}}
+  \end{beamercolorbox}%
+}
+\makeatother
+
+
+
+

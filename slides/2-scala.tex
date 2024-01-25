@@ -1,0 +1,89 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{etex} % fixes new-dimension error
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx,amsmath}
+\usepackage{stmaryrd} % cf. interleave
+\usepackage{booktabs}
+\usepackage{amscd}
+\usepackage{multicol}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{alltt}
+\usepackage{proof}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage[new]{old-arrows}
+\usepackage[all]{xy}
+\usepackage{pgfplots}
+\usepackage{textcomp}
+
+\input{src/macros/macros}
+%-------------- template --------------------------------------------------
+\input{src/macros/beamerconf}
+%----------------------------------------------------------------------------
+
+\begin{document}
+
+% \setLectureBasic{Cyber-Physical Computation}
+\setLecture{2}{Short introduction to Scala}
+\frame[plain]{\titlepage}
+
+
+\section{Motivation}
+
+\begin{frame}\frametitle{Why Scala?}
+    
+  \frsplitdiffthree[T]{0.31}{0.31}{0.31}{
+    \begin{block}{1. Many modern concurrency frameworks}
+      - Syntactic flexibility
+      \\- Programming models as Embedded Domain Specific Languages
+      \\- Many useful features
+    \end{block}
+  }{
+    \begin{exampleblock}{2. Safe language}
+      ...
+    \end{exampleblock}
+  }{
+    \begin{alertblock}{3. Java interoperability}
+      ...
+    \end{alertblock}
+  }
+
+\end{frame}
+
+\section{Executing Scala}
+
+\begin{frame}[fragile]{Running with SBT}
+~\\[-8mm]
+% \doSimpleExercise{What do these functions do?}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{lstlisting}
+object SquareOf5 extends App {
+  def square(x: Int): Int = x * x
+  // val s = square(5)
+  println(s"Result: $$s")
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{lstlisting}[language=scala]
+...
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}\frametitle{Stack and Heap}
+    \centering
+    
+    % \fromBook{19}{45mm}{98mm}{43mm}{35mm} % left,bottom,right,up
+    \fromBookW{19}{103mm}{63mm}
+
+\end{frame}
+
+
+\end{document}
