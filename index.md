@@ -92,7 +92,7 @@ Distributed evaluation will include both modelling (EM) and program implementati
       * [Nelma Moreira](https://www.dcc.fc.up.pt/~nam/)
       * <a></a>
         + DCC 1.20
-        + nam<span>(at)</span>fc.up.pt
+        + nelma.moreira<span>(at)</span>fc.up.pt
         + meet: thu afternoon (email before)
         {: .myInterests}
       {: .myMemberSubItems}
