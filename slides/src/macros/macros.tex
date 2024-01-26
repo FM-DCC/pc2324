@@ -171,10 +171,12 @@
   \fbox{\begin{minipage}{0.9\textwidth}\protect{#1}\end{minipage}}
   \end{center}}
 
-\newcommand{\mybox}[2][0.9]{
-  \begin{minipage}{#1\textwidth}\begin{block}{}\centering #2\end{block}\end{minipage}}
-\newcommand{\mycbox}[2][0.9]{
-  {\\[-5mm]\centering\mybox[#1]{#2}\\[-5mm]}}
+\newcommand{\mybox}[2][4mm]{
+  % \begin{minipage}{#1\textwidth}\begin{block}{}\centering #2\end{block}\end{minipage}}
+  \tikz{\node[fill=barcolor!60,align=center,inner sep=#1]{#2};}}
+\newcommand{\mycbox}[2][4mm]{
+  \begin{center}\mybox[#1]{#2}\end{center}}
+  % {\\[-5mm]\centering\mybox[#1]{#2}\\[-5mm]}}
 
 %%%%% Tikz
 % \usetikzlibrary{arrows.meta, calc, fit, tikzmark}
