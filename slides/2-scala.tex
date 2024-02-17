@@ -28,14 +28,14 @@
 
 % \setLectureBasic{Cyber-Physical Computation}
 \setLecture{2}{Short introduction to Scala}
-\frame[plain]{\titlepage}
+% \frame[plain]{\titlepage}
 
 
 \section{Motivation}
 
 \begin{frame}\frametitle{Why Scala?}
     
-  \frsplitdiffthree[T]{0.31}{0.31}{0.35}{
+  \splitthree{0.31}{0.31}{0.35}{
     \begin{block}{Used by many modern concurrency frameworks}
       - Syntactic flexibility
       \\- Programming models as Embedded Domain Specific Languages
@@ -364,17 +364,23 @@ val p2 = p1 + p1 * 2 //?
 \begin{frame}[fragile]\frametitle{Package objects}
 ~\\[-8mm]
 \begin{columns}
-\begin{column}{0.56\textwidth}
-\begin{lstlisting}
+\begin{column}{0.62\textwidth}
+\alert{\textbf{File \texttt{src/main/scala/cp/lablessons/package.scala}}}
+\begin{lstlisting}[emph={log}]
 package cp
-package object practical {
+
+package object lablessons {
   def log(msg: String): Unit =
-    println(s"${Thread.currentThread.getName}: $msg")
+    println(
+      s"\§{Thread.currentThread.getName}: \§msg"
+    )
 }
 \end{lstlisting}
 \end{column}
-\begin{column}{0.42\textwidth}
+\begin{column}{0.40\textwidth}
 The \texttt{log} function is used throughout these lessons
+\\[4mm]
+Requires starting with\\~~\texttt{package cp.lablessons}
 \end{column}
 \end{columns}
 \end{frame}

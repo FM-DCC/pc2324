@@ -36,7 +36,7 @@ name := "CP2324"
 
 version := "1.0"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.12.18"
 \end{lstlisting}
 \subex{Make your hello-world program. Use your favourite editor \bash{EDIT}.
 \\\bash{> mkdir src/main/scala/cp/lablessons/lesson1}
@@ -53,9 +53,11 @@ object HelloWorld extends App {
 \\\bash{> sbt}}
 \subex{Run your program:
 \\\bash{sbt> run}
-\\[2mm](You can also \bash{compile}, \bash{~compile}, \bash{console}, and many other.)}
+\note{You can also \texttt{compile}, \texttt{$\sim$compile}, \texttt{console}, and many other.
+For example, you can compile and run java from the command line:
+\\\bash{java -cp ~/.sbt/boot/scala-2.12.12/lib/scala-library.jar:target/scala-2.12/classes/ cp.lablessons.lesson1.HelloWorld}}
+}
 
-\clearpage
 \subex{Extend the \bash{build.sbt} with dependencies that we may need during the semester.}
 \begin{lstlisting}
 resolvers ++= Seq(
@@ -64,7 +66,7 @@ resolvers ++= Seq(
   "Sonatype OSS Releases" at
     "https://oss.sonatype.org/content/repositories/releases",
   "Typesafe Repository" at
-    "http://repo.typesafe.com/typesafe/releases/"
+    "https://repo.typesafe.com/typesafe/releases/"
 )
 
 libraryDependencies ++= Seq(

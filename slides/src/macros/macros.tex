@@ -123,7 +123,11 @@
 
 
 % Spliting frames in 2 columns
-\newcommand{\frsplit}[3][.48]{
+\newcommand{\splittwo}[4]{ 
+  \begin{columns}[T]% align columns
+  \begin{column}{#1\textwidth} #3 \end{column} ~~~
+  \begin{column}{#2\textwidth} #4 \end{column} \end{columns}
+}\newcommand{\frsplit}[3][.48]{
   \begin{columns}%[T] % align columns
   \begin{column}{#1\textwidth} #2 \end{column} ~~~
   \begin{column}{#1\textwidth} #3 \end{column} \end{columns}
@@ -142,6 +146,12 @@
 \newcommand{\colb}[3][.48]{\begin{column}{#1\textwidth} \begin{block}{#2} #3 \end{block} \end{column}}
 
 % Spliting frames in 3 columns
+\newcommand{\splitthree}[6]{
+  \begin{columns}[T] % align columns
+  \begin{column}{#1\textwidth} #4 \end{column} ~~~
+  \begin{column}{#2\textwidth} #5 \end{column} ~~~
+  \begin{column}{#3\textwidth} #6 \end{column} \end{columns}
+}
 \newcommand{\frsplitthree}[4][.31]{
   \begin{columns}%[T] % align columns
   \begin{column}{#1\textwidth} #2 \end{column} ~~~
@@ -284,6 +294,8 @@
   % ,emph={act,proc,init,sort,map,var,eqn}
   % ,emph={[2]block,hide,comm,rename,allow,||,<>,sum,&&,=>}
 }
+
+\newcommand{\code}[1]{{\relsize{-1}\ttfamily #1}}
 
 \lstdefinestyle{tiny}{basicstyle=\ttfamily\relsize{-7}}
 
