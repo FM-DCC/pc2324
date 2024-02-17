@@ -1,0 +1,507 @@
+%------ using color ---------------------------------------------------------
+%\newrgbcolor{goldenrod}{.80392 .60784 .11373}
+%\newrgbcolor{darkgoldenrod}{.5451 .39608 .03137}
+%\newrgbcolor{brown}{.15 .15 .15}
+%\newrgbcolor{darkolivegreen}{.33333 .41961 .18431}
+\definecolor{goldenrod}{rgb}{.80392,.60784,.11373}
+\definecolor{darkgoldenrod}{rgb}{.5451,.39608,.03137}
+\definecolor{brown}{rgb}{.15,.15,.15}
+\definecolor{darkolivegreen}{rgb}{.33333,.41961,.18431}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{myGray}{gray}{0.85}
+%
+
+
+% \newcommand{\red}[1]{\textcolor{red!80!black}{#1}\xspace}
+% \newcommand{\blue}[1]{\textcolor{blue}{#1}\xspace}
+% \newcommand{\gold}[1]{\textcolor{darkgoldenrod}{#1}\xspace}
+\newcommand{\grey}[1]{\textcolor{myGray}{#1}\xspace}
+\def\laplace#1#2{*\txt{\mbox{ \fcolorbox{black}{myGray}{$\begin{array}{c}\mbox{#1}\\\\#2\\\\\end{array}$} }}}
+\newenvironment{bluein}{\blue}{\black\hskip -2.5pt}
+
+%------ contexts  ---------------------------------------------------------
+
+\newtheorem{defi}{Defini\cao}[section]
+\newtheorem{defi*}{Defini\cao}
+\newtheorem{lema*}{Lema}
+\newenvironment{lsbcom}
+      {\footnotesize  \hrule ~\\ ~\\ {\bf \sc Nota:} }
+      {\hrule  ~\\ ~\\  \normalsize}
+      
+\newenvironment{lsbcomi}
+      {\footnotesize  \hrule ~\\ ~\\ {\bf \sc Note:} }
+      {\hrule  ~\\ ~\\  \normalsize}
+      
+\newenvironment{demo}%
+     {\vspace{-5mm}\noindent {\bf Prova:}}%
+    {\par \nopagebreak  \noindent \fimdemo \vspace{3mm} }
+\newenvironment{demoi}%
+     {\vspace{-5mm}\noindent {\bf Proof:}}%
+    {\par \nopagebreak  \noindent \fimdemo \vspace{3mm} }
+
+
+% \newcommand{\N}{\ensuremath{\mathbb{N}}\xspace}
+% \newcommand{\Z}{\ensuremath{\mathbb{Z}}\xspace}
+% \newcommand{\R}{\ensuremath{\mathbb{R}}\xspace}
+
+\newcommand{\cR}{\ensuremath{\mathcal{R}}\xspace}
+
+% \newcommand{\set}[1]{\left\{ #1 \right\}} % {a,b,...z}
+\def\bang{{!}}
+\def\deff{\stackrel{\rm def}{=}}          % Function definition symbol
+%\def\deff{\, :=\, }          % Function definition symbol
+
+
+\def\always{\boxempty}
+\def\eventual{\Diamond}
+\def\nexts{\bigcirc}
+\def\until{\mathbin{\mathcal U}}
+
+
+
+
+%------ CCS          -----------------------------------------%
+\def\ppe{\mathbin{\vartriangleright}}
+\def\kcomp{\mathbin{\boldsymbol{\bullet}}}
+%\def\qcomp{\mathbin{\boldsymbol{;}}}
+\def\ssp{\textsc{skip}}
+\def\fim{\dagger}
+%\def\ppe{\gg}
+\def\ff{\ensuremath{\mi{f\!f}}\xspace}
+\def\tt{\ensuremath{\mi{t\!t}}\xspace}
+\def\cnil{\mathbf{0}}
+\def\cpf#1#2{#1 . #2}                           % a.P
+\def\cou#1#2{#1 \mathbin{+} #2}                 % P + Q
+%\def\crt#1#2{\mathbin{#1 \setminus_{#2}}}       % P \ A
+%\def\crtt#1#2{\mathbin{#1 \setminus\!\setminus_{#2}}}       % P \ A
+%\def\crt#1#2{\mathsf{new}\, #2\;  #1}       % P \ A
+\def\crt#1#2{#1 \backslash #2}       % P \ A
+%\def\crn#1#2{\{#2\}\, #1}                  % P[f]
+
+\def\crn#1#2{\mathbin{#1[#2]}}                  % P[f]
+\def\couit#1#2{\Sigma_{#1}#2}                  %  + i=1,n
+\def\cpar#1#2{#1 \mid #2}                       %  |
+\def\ctpar#1#2{#1 \parallel #2}                       %  |
+\def\cpars#1#2#3{#1 \mid_{#3} #2}               %  |S
+\def\ffix#1#2{\underline{fix}~(#1\, =\, #2)}  % fix X
+\def\fffix#1#2#3{\underline{fix}_{#1}~(#2\, =\, #3)}  % fix X
+\def\tfix#1#2{\underline{\Tilde{fix}}~(\Tilde{#1}\, =\, \Tilde{#2})}  % fix X
+%\def\ainv#1{\Bar{#1}}                   % ~ a
+\def\ainv#1{\overline{#1}}                   % ~ a
+\def\cif#1#2{\fuc{if}\, #1\, \fuc{then}\, #2}
+\def\ccif#1#2#3{\fuc{if}\, #1\, \fuc{then}\, #2\, \fuc{else}\, #3}
+
+\def\fres#1#2{#1 \restriction #2}                
+
+\def\mean#1{\mathopen{[\![}#1\mathclose{]\!]}}
+\def\llbracket{\mathopen{[\![}}
+\def\rrbracket{\mathopen{]\!]}}
+
+\def\cfree#1{\fuc{fn} (#1)}
+\def\cbound#1{\fuc{bn} (#1)}
+\def\anew#1{\overline{#1}\mathsf{new}\, } 
+\def\transitatau{\rtran{\tau}}
+\def\transitaa{\rtran{a}}
+
+
+% 2015
+
+
+
+
+%%%%%%%%%%%%%%%% NUNO reconf
+
+
+\def\trans#1{\stackrel{#1}{\longrightarrow}}
+\def\TS#1{\mathcal{G}(#1)}
+\def\TSn#1{\mathcal{G}_{nodes}(#1)}
+
+
+
+
+%--------------------
+%--- by jose 2016 ---
+%--------------------
+
+\newcommand{\myblock}[1]{\begin{beamercolorbox}[dp=1ex,center,rounded=true]%
+  {postit} {\large \textbf{#1}} \end{beamercolorbox}}%
+\def\trans#1{\xrightarrow{#1}}  % - a - > 
+\def\Trans#1{\stackrel{#1}{\Longrightarrow}} % =a=> 
+\def\transtau{\xrightarrow{\tau}}  % - a - > 
+
+
+%\newcommand{\evm}[1]{\langle #1 \rangle\,\fi}
+%\newcommand{\alm}[1]{[#1]\,}
+\newcommand{\evm}[1]{\if\relax\detokenize{#1}\relax 
+  \Diamond \else\langle #1 \rangle\fi}
+\newcommand{\alm}[1]{\if\relax\detokenize{#1}\relax 
+  \boxempty \else[#1]\fi}
+
+\newcommand{\myparagraph}[1]{\medskip\noindent\textbf{#1}~~}
+
+
+
+% Listing
+\lstset{
+  language=Scala,
+  basicstyle=\ttfamily\footnotesize, % overriding size
+  commentstyle=\sffamily\color{green!60!black},
+}
+% \lstset{%language=Java
+% %  ,basicstyle=\footnotesize
+%   ,columns=fullflexible %space-fexible
+%   ,keepspaces
+% %  ,numberstyle=\tiny
+%   ,mathescape=true
+%   ,showstringspaces=false
+% %  ,morekeywords={refract,global,local,on-change}
+%   ,morecomment=[l]{\%}
+%   ,commentstyle=\sl\sffamily\color{gray}\scriptsize
+%   ,basicstyle=\ttfamily\relsize{-0.5}
+%   ,keywordstyle=\bf\sffamily\color{purple}
+% %  ,emphstyle=\it\sffamily\color{blue!80!black}
+%   ,emphstyle=\bfseries\itshape\color{blue!80!black}
+%   ,emphstyle={[2]\itshape\color{red!70!black}}%\underbar}
+%   ,stringstyle=\color{darkgreen}
+%   ,alsoletter={-,||,+,<>,&&,=>}
+%   ,literate=*{->}{{{\color{red!70!black}$\to$}}}{1}
+%              {.}{{{\color{red!70!black}.}}}{1}
+%              {+}{{{\color{red!70!black}+}}}{1}
+%              {*}{{{\color{red!70!black}*}}}{1}
+%              {\#}{{{\color{red!70!black}\#}}}{1}
+%   ,emph={act,proc,init,sort}
+%   ,emph={[2]block,hide,comm,rename,allow,||,<>,sum,&&,=>}
+% %  ,emphstyle={[2]\color{blue}}2
+%   ,framerule=1pt
+%   ,backgroundcolor=\color{black!2}
+%   ,rulecolor=\color{black!30}
+%   ,frame=tblr
+%   ,xleftmargin=4pt
+%   ,xrightmargin=4pt
+%   ,captionpos=b
+% %  ,belowcaptionskip=\medskipamount
+%   ,aboveskip=\baselineskip
+%   ,floatplacement=htb
+% }
+\lstdefinestyle{bash}{literate=*}
+% \newcommand{\code}[1]{\lstinline[basicstyle=\ttfamily\relsize{-0.5},keywordstyle=\bf\sffamily\color{purple},columns=fullflexible,keepspaces]±#1±}
+\newcommand{\code}[1]{\lstinline[columns=fullflexible,keepspaces]±#1±}
+\newcommand{\mcode}[1]{\text{\code{#1}}}
+\newcommand{\bash}[1]{\lstinline[basicstyle=\ttfamily\relsize{-0.5}\color{darkgreen},keywordstyle=\bf\sffamily\color{purple},columns=fullflexible,keepspaces,literate=*]±#1±}
+
+
+%%%%%
+% Named environments (no counters) 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+%\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+%\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{question}[2][Question]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+% Environments with counters
+\newtheoremstyle{myplain} {8mm}% (Space above)
+{3mm}% (Space below)
+{}% (Body font)
+{}% (Indent amount)
+{\bfseries\large}% (Theorem head font)
+{.}% (Punctuation after theorem head)
+{.5em}% (Space after theorem head)2
+{}% (Theorem head spec (can be left empty, meaning ÔnormalÕ))
+
+\theoremstyle{myplain}
+\newtheorem{myExercise}{Exercise}
+
+\theoremstyle{definition} % no italics
+\newtheorem{subexercise}{}[myExercise]
+
+\newcommand{\ex}[1]{\begin{myExercise}#1\end{myExercise}}
+\newcommand{\subex}[1]{\begin{subexercise}#1\end{subexercise}}
+
+\newcommand{\mytikz}[2][]{\medskip\centerline{\begin{tikzpicture}[#1]#2\end{tikzpicture}}\medskip}
+
+
+
+%%%%% REO %%%%
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{threadground}
+\pgfsetlayers{background,threadground,main}
+
+\usepackage{pgfplots}
+
+% thickness of the lines
+\tikzstyle{border}   = [thick]
+\tikzstyle{reodist}    = [node distance=15mm]
+
+% nodes and I/O
+\tikzstyle{reonode}  = [border,circle,inner sep=1.5pt,reodist]
+\tikzstyle{mixed}    = [reonode, line width=0, %draw=black,
+%                        outer color=black,inner color=black!20
+                        shading=ball,ball color=black]
+\tikzstyle{boundary} = [reonode,draw=black,fill=white]
+\tikzstyle{point}    = [reonode,draw=black,fill=black,inner sep=0.5pt]
+\tikzstyle{io}       = [border,rectangle,draw=black,fill=white,inner sep=3.25pt,node distance=0.75cm]
+\tikzstyle{ioblack}  = [border,rounded corners=0,rectangle,draw=black,
+    fill=black,inner sep=3.25pt,node distance=0.75cm]
+\tikzstyle{comp}     = [border,rectangle,draw=black,fill=white,inner sep=3.25pt,reodist]
+\tikzstyle{token} = [inner sep=0.8mm,regular polygon,regular polygon sides=5,draw=black, fill=#1]
+\newcommand{\token}{\tikz \node[token=green!70!black] {};\xspace}
+
+
+%% animations
+\tikzstyle{animflow}=[blue,draw opacity=0.2,line width=2.7mm,line cap=round,line join=round]                   
+\tikzstyle{animnf}=[postaction=decorate,line width=0,draw opacity=0,
+                  decoration={markings,mark=at position #1 with 
+                  {\node[regular polygon,regular polygon sides=3,rotate=30,draw=red,draw opacity=0.5,line width=1.5pt,line cap=round,line join=round, rounded corners=0.5pt,
+                  transform shape,inner sep=1.3pt]{};}}]
+\tikzstyle{animfflow}=[blue!20,line width=2.7mm,line cap=round,line join=round]                   
+
+
+% channels
+\tikzstyle{channel}=[border,>=stealth]
+\tikzstyle{sync}=[channel,->]
+\tikzstyle{lossy}=[channel,->,dashed]
+\tikzstyle{sdrain}=[channel,>-<]
+\tikzstyle{sspout}=[channel,<->]
+\tikzstyle{fifo}=[channel,->,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.5 with 
+                  {\node[rectangle,draw=black,fill=white,rounded corners=0,
+                  transform shape,minimum width=6mm]{#1};}}]
+\tikzstyle{fifos}=[channel,->,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.5 with 
+                  {\node[rectangle,draw=black,fill=white,rounded corners=0,
+                  transform shape,minimum width=4mm]{#1};}}]
+\tikzstyle{fifocol}=[channel,->,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.5 with 
+                  {\node[rectangle,draw=black,fill=#1,rounded corners=0,
+                  transform shape,minimum width=6mm]{};}}]
+\tikzstyle{vare}=[channel,->,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.5 with 
+                  {\node[rectangle,draw=black,fill=white,rounded corners=3,
+                  transform shape,minimum width=6mm]{#1};}}]
+\tikzstyle{varf}=[channel,->,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.5 with 
+                  {\node[rectangle,draw=black,fill=black,rounded corners=3,
+                  transform shape,minimum width=6mm]{#1};}}]
+\tikzstyle{filter}=[channel,->,
+                  decorate,rounded corners=0,
+                  decoration={zigzag,segment length=1.3mm, 
+                  pre length=4mm,post length=4mm,#1}]
+\tikzstyle{lfilter}=[channel,->,
+                  decorate,rounded corners=0,
+                  decoration={zigzag,segment length=1.3mm, 
+                  pre length=#1,post length=#1}]
+\tikzstyle{llfilter}=[channel,->,
+                  decorate,rounded corners=0,
+                  decoration={zigzag,segment length=1.3mm, 
+                  pre length=#1,post length=#1}]
+\tikzstyle{transf}=[channel,->,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.45 with 
+                  {\node[isosceles triangle,draw=black,fill=white,rounded corners=0,
+                  transform shape,inner sep=2pt,#1]{};}}]
+\tikzstyle{clossy}=[channel,->,dashed,
+                  postaction=decorate,
+                  decoration={markings,mark=at position 0.5 with 
+                  {\node[sloped]{!};}}]
+\tikzstyle{pdrain}=[channel,>-<,
+                  postaction=decorate,
+                  decoration={markings,
+                    mark=at position 0.5 with
+                      {\draw[channel,-]
+                        (-2pt,-3pt) -- (-2pt,3pt) [transform shape]
+                        (2pt,-3pt) -- (2pt,3pt) [transform shape];},
+                    mark=at position 0.25 with {\node[sloped]{!};}}]
+
+\tikzstyle{adrain}=[channel,>-<,
+    postaction=decorate,
+    decoration={markings,mark=at position 0.5 with
+    {\draw[channel,-] (-2pt,-3pt) -- (-2pt,3pt) [transform shape]
+                      (2pt,-3pt) -- (2pt,3pt) [transform shape];}}]
+\tikzstyle{aspout}=[channel,<->,
+    postaction=decorate,
+    decoration={markings,mark=at position 0.5 with
+    {\draw[channel,-] (-2pt,-3pt) -- (-2pt,3pt) [transform shape]
+                      (2pt,-3pt) -- (2pt,3pt) [transform shape];}}]
+
+
+% connector box
+\tikzstyle{connector}=[fill=black!10,rounded corners]
+
+\newcommand{\reoconnector}[2][]{
+  \begin{tikzpicture}[line join=round,#1]
+  #2
+  \end{tikzpicture}
+}
+
+%%% LOTS OF WORK for an exclusive router.
+
+% \pgfdeclareshape{circle cross}
+% {
+%   \inheritsavedanchors[from=circle] % this is nearly a circle
+%   \inheritanchorborder[from=circle]
+%   \inheritanchor[from=circle]{north}
+%   \inheritanchor[from=circle]{north west}
+%   \inheritanchor[from=circle]{north east}
+%   \inheritanchor[from=circle]{center}
+%   \inheritanchor[from=circle]{west}
+%   \inheritanchor[from=circle]{east}
+%   \inheritanchor[from=circle]{mid}
+%   \inheritanchor[from=circle]{mid west}
+%   \inheritanchor[from=circle]{mid east}
+%   \inheritanchor[from=circle]{base}
+%   \inheritanchor[from=circle]{base west}
+%   \inheritanchor[from=circle]{base east}
+%   \inheritanchor[from=circle]{south}
+%   \inheritanchor[from=circle]{south west}
+%   \inheritanchor[from=circle]{south east}
+%   \inheritbackgroundpath[from=circle]
+%   \foregroundpath{
+%     \centerpoint%
+%     \pgf@xc=\pgf@x%
+%     \pgf@yc=\pgf@y%
+%     \pgfutil@tempdima=\radius%
+%     \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/outer xsep}}%  
+%     \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/outer ysep}}%  
+%     \ifdim\pgf@xb<\pgf@yb%
+%       \advance\pgfutil@tempdima by-\pgf@yb%
+%     \else%
+%       \advance\pgfutil@tempdima by-\pgf@xb%
+%     \fi%
+%     \pgfpathmoveto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{-0.707107\pgfutil@tempdima}{0.707107\pgfutil@tempdima}}}
+%     \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{0.707107\pgfutil@tempdima}{-0.707107\pgfutil@tempdima}}}
+%     \pgfpathmoveto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{-0.707107\pgfutil@tempdima}{-0.707107\pgfutil@tempdima}}}
+%     \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{0.707107\pgfutil@tempdima}{0.707107\pgfutil@tempdima}}}
+%   }
+% }
+
+% \tikzstyle{exrouter} = [border,inner sep=1.5mm,
+%      reodist,draw=black,fill=white,circle cross]
+% \tikzstyle{smallexrouter} = [border,inner sep=1.0mm,
+%      reodist,draw=black,fill=white,circle cross]
+
+\tikzstyle{exrouter}=[border,draw=black,circle,path picture={
+  \draw[black](path picture bounding box.south east) -- (path picture bounding box.north west) (path picture bounding box.south west) -- (path picture bounding box.north east);}]
+
+
+%--------- Setting headers ---------------
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+% \pagestyle{plain}
+\pagestyle{fancy}
+
+\newcommand{\setHeader}[2]{
+  \newcommand{\myHeader}{
+    \thispagestyle{empty}
+    \begin{center}
+      \bfseries
+      {\Large #1}\\[2mm]
+      \LOGO DCC-FCUP, University of Porto\\
+      Jos\'{e} Proen\c{c}a\\[2mm]
+      #2
+    \end{center}
+
+    % \noindent
+    % Number: \rule{20mm}{0.5pt}
+    % Name: \rule{116.5mm}{0.5pt}
+
+    % \noindent
+    % \hrulefill\\[0mm]
+    % {\footnotesize
+    % \textbf{Recall:}\\
+    % \begin{minipage}{0.67\textwidth}
+    %   $f(n) = \mathcal{O}(g(n))$
+    %     if there exist $n0,c>0$ such that $\forall n\geq n0: f(n) \leq c \times g(n)$
+    %   \\[1mm]
+    %   $f(n) = \Omega(g(n))$
+    %     if there exist $n0,c>0$ such that $\forall n\geq n0: f(n) \geq c \times g(n)$
+    %   \\[1mm]
+    %   $f(n) = \Theta(g(n))$
+    %     if $f(n) = \mathcal{O}(g(n))$ and $f(n) = \Omega(g(n))$
+    %   \\[1mm]
+    %   Master Theorem: if $T(n)=aT(n/b) + cn^k$ then $T(N)$ is:
+    %   \\\hspace*{3mm}$[\Theta(n^k)$ if $a < b^k$]
+    %   ~~~[$\Theta(n^k\log n)$ if $a=b^k$]
+    %   ~~~[$\Theta(n^{\log_b a}$) if $a > b^k$]
+    % \end{minipage}
+    % \begin{minipage}{0.31\textwidth}
+    % % \begin{align*}
+    %     $\sum_{i=1}^n i ~=~ \frac{n(n+1)}{2}$
+    %     \\[3mm]
+    %     ${\sum_{i=0}^n x^i} ~=~
+    %           {\frac{x^{n+1}-1}{x-1}}$
+    %     \\[3mm]
+    %     ${\sum_{i=1}^n i \times x^{i-1}} ~=~ 
+    %           {\frac{n\times x^{n+1}-(n+1)\times x^n +1}{(x-1)^2}}$
+    % % \end{align*}
+    % \end{minipage}
+    % \\[2mm]
+    % Answer below each question. If you need more space, use the empty space at the end of the exam.
+    % \\[-1mm]If needed ask for a new paper.
+    % \\[-6mm]
+    % }
+
+    \noindent
+    \hrulefill
+  }
+
+  \newcommand{\newExamPage}{
+    \clearpage
+    \thispagestyle{empty}
+    % ~
+    % \newpage
+    \begin{center}
+      \bfseries
+      {\Large #1} (continuation -- \thepage/\pageref{LastPage})\\[2mm]
+      DCC-FCUP, University of Porto,
+      Jos\'{e} Proen\c{c}a,
+      #2
+    \end{center}
+
+    % \noindent
+    % % \hrulefill
+    % % \\[2mm]
+    % Number: \rule{20mm}{0.5pt}
+    % Name: \rule{116.5mm}{0.5pt}
+  }
+
+  \renewcommand{\headrulewidth}{.4mm} % header line width
+  \fancyhf{}
+  % \fancyhfoffset[L]{1cm} % left extra length
+  % \fancyhfoffset[R]{1cm} % right extra length
+  \rhead{\thepage/\pageref{LastPage}}
+  \lhead{\bfseries #1}
+  \rfoot{}
+}
+%-----------------------------------------
+
+
+%%% Misc
+
+\def\pv#1#2{\langle #1 \rangle #2}
+\def\nc#1#2{[#1]#2}
+
+\newcommand{\dkb}[1]{{\textcolor{blue}{#1}}}
+\def\tran#1{\stackrel{#1}{\longrightarrow}}
+\def\imp{\mathbin{\Rightarrow}}
+\def\comp{\mathbin{\boldsymbol{\cdot}}}
+
+
+% \newcommand{\note}[1]{
+%   \noindent\emph{\color{black!50}\textbf{Note:} #1}
+% }
+
+\newcommand{\note}[1]{\[\textcolor{black!60}{
+  \!\left[~\begin{minipage}{0.964\textwidth}{\small\it \textbf{Note:} #1}\end{minipage}~\right]
+}\]}

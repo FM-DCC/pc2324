@@ -1,0 +1,173 @@
+\documentclass[11pt]{article}
+
+\renewcommand\familydefault{\sfdefault}
+
+
+\input{macros/preamble}
+\input{macros/slides-macros}
+\input{macros/macros}
+\usepackage{url}
+% \input{macros/tp-macros}
+
+\setHeader{1. Exercises: Introduction to Scala (WiP)}%
+          {Concurrent Programming -- Part 2}%
+          
+
+
+
+\begin{document}
+
+\myHeader
+
+These exercises are taken mainly from the book ``\emph{Learning Concurrent Programming in Scala}'', and are designed to test the knowledge of the Scala programming language. You should solve them by sketching out a pseudocode solution, rather than a complete Scala program.
+
+\begin{myExercise} Set up your computer to compile and run Scala.
+\subex{Install SBT -- \url{http://www.scala-sbt.org}.}
+\subex{Open a Command Promp.}
+\subex{Create a folder for the project:
+\\\bash{> mkdir cp2324}
+\\\bash{> cd cp2324}
+}
+\subex{Create a source code directory for our examples:
+\\\bash{> mkdir -p src/main/scala/cp/lablessons/}}
+\subex{Create the configuration file \bash{build.sbt} below at the root of \bash{cp2324} (empty lines are mandatory).}
+\begin{lstlisting}
+name := "CP2324"
+
+version := "1.0"
+
+scalaVersion := "2.12.12"
+\end{lstlisting}
+\subex{Make your hello-world program. Use your favourite editor \bash{EDIT}.
+\\\bash{> mkdir src/main/scala/cp/lablessons/lesson1}
+\\\bash{> EDIT src/main/scala/cp/lablessons/lesson1/HelloWorld.scala}
+}
+\begin{lstlisting}
+package cp.lablessons.lesson1
+
+object HelloWorld extends App {
+  println("Hello, world!")
+}
+\end{lstlisting}
+\subex{Go back to the terminal and run SBT to start an interactive shell:
+\\\bash{> sbt}}
+\subex{Run your program:
+\\\bash{sbt> run}
+\\[2mm](You can also \bash{compile}, \bash{~compile}, \bash{console}, and many other.)}
+
+\clearpage
+\subex{Extend the \bash{build.sbt} with dependencies that we may need during the semester.}
+\begin{lstlisting}
+resolvers ++= Seq(
+  "Sonatype OSS Snapshots" at
+    "https://oss.sonatype.org/content/repositories/snapshots",
+  "Sonatype OSS Releases" at
+    "https://oss.sonatype.org/content/repositories/releases",
+  "Typesafe Repository" at
+    "http://repo.typesafe.com/typesafe/releases/"
+)
+
+libraryDependencies ++= Seq(
+  "commons-io" % "commons-io" % "2.4"
+)
+\end{lstlisting}
+If you are in the SBT shell and you modify the \bash{build.sbt} you need to reload it:
+\\\bash{sbt> reload}
+
+\end{myExercise}
+
+\begin{myExercise}
+Implement a compose method with the following signature:
+\begin{lstlisting}
+def compose[A, B, C](g: B => C, f: A => B): A => C = ???
+\end{lstlisting}
+This method must return a function h, which is the composition of the
+functions f and g.
+\end{myExercise}
+
+\begin{myExercise}
+Implement a fuse method with the following signature:
+\begin{lstlisting}
+def fuse[A, B](a: Option[A], b: Option[B]): Option[(A, B)] = ???
+\end{lstlisting}
+The resulting Option object should contain a tuple of values from the Option objects a and b, given that both a and b are non-empty. Use for- comprehensions
+\end{myExercise}
+
+\begin{myExercise}
+Implement a check method, which takes a set of values of type T and a function of type \code{T => Boolean}:
+\begin{lstlisting}
+def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = ???
+\end{lstlisting}
+The method must return true if and only if the pred function returns true for all the values in xs without throwing an exception. Use the check method as follows:
+\begin{lstlisting}
+check(0 until 10)(40 / _ > 0)
+\end{lstlisting}
+\note{The check method has a curried definition: instead of just one parameter list, it has two of them. Curried definitions allow a nicer syntax when calling the function, but are otherwise semantically equivalent to single-parameter list definitions.}
+\end{myExercise}
+
+\ex{Modify the Pair class from this chapter so that it can be used in a pattern match.
+% \note{If you haven't already done so, familiarize yourself with pattern matching in Scala.}
+}
+
+\begin{myExercise}
+Implement a permutations function, which, given a string, returns a sequence of strings that are lexicographic permutations of the input string:
+\begin{lstlisting}
+def permutations(x: String): Seq[String]
+\end{lstlisting}
+\end{myExercise}
+
+\begin{myExercise}
+Implement a combinations function that, given a sequence of elements, produces an iterator over all possible combinations of length n. A combination is a way of selecting elements from the collection so that every element is selected once, and the order of elements does not matter. For example, given a collection Seq(1, 4, 9, 16), combinations of length 2 are Seq(1, 4), Seq(1, 9), Seq(1, 16), Seq(4, 9), Seq(4, 16), and Seq(9, 16). The combinations function has the following signature:
+\begin{lstlisting}
+def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]]
+\end{lstlisting}
+See the Iterator API in the standard library documentation
+\end{myExercise}
+
+
+\begin{myExercise}
+Implement a method that takes a regular expression, and returns a partial function from a string to lists of matches within that string:
+\begin{lstlisting}
+def matcher(regex: String): PartialFunction[String,List[String]]
+\end{lstlisting}
+The partial function should not be defined if there are no matches within the argument strings. Otherwise, it should use the regular expression to output the list of matches.
+\end{myExercise}
+
+
+\begin{myExercise}
+Consider that you and three of your colleagues working in an office divided into cubicles. You cannot see each other, and you are not allowed to verbally communicate, as that might disturb other workers. Instead, you can throw pieces of paper with short messages at each other. Since you are confined in a cubicle, neither of you can tell if the message has reached its destination. At any point, you or one of your colleagues may be called to the boss's office and kept there indefinitely. Design an algorithm in which you and your colleagues can decide when to meet at the local bar. With the exception of the one among you who was called to the boss's office, all of you have to decide on the same time. What if some of the paper pieces can arbitrarily miss the target cubicle?
+\end{myExercise}
+
+\begin{myExercise}
+Imagine that, in the previous exercise, you and your colleagues also have a whiteboard in the hall next to the office. Each one of you can occasionally pass through the hall and write something on the whiteboard, but there is no guarantee that either of you will be in the hall at the same time.
+Solve the problem from the previous exercise, this time using the whiteboard.
+\end{myExercise}
+
+
+
+% \begin{myExercise}
+% ...
+
+% \noindent
+% \begin{minipage}{0.24\textwidth}
+% \begin{lstlisting}[language=C++,emph={HTable,Bucket,find_probe,lookup}]
+% int f(int x) {}
+% \end{lstlisting}
+% \end{minipage}\hfill
+% \begin{minipage}{0.37\textwidth}
+% \begin{lstlisting}[language=C++,emph={HTable,Bucket},emph={[2]find_probe}]
+% int g(int x) {}\end{lstlisting}
+% \end{minipage}\hfill
+% \begin{minipage}{0.37\textwidth}
+% \begin{lstlisting}[language=C++,emph={HTable,Bucket},emph={[2]find_probe,update}]
+% int h(int x) {}
+% \end{lstlisting}
+% \end{minipage}
+
+% \transl{
+%   ...
+% }
+% \end{myExercise}
+
+
+\end{document}

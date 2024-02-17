@@ -35,19 +35,25 @@
 
 \begin{frame}\frametitle{Why Scala?}
     
-  \frsplitdiffthree[T]{0.31}{0.31}{0.31}{
-    \begin{block}{1. Many modern concurrency frameworks}
+  \frsplitdiffthree[T]{0.31}{0.31}{0.35}{
+    \begin{block}{Used by many modern concurrency frameworks}
       - Syntactic flexibility
       \\- Programming models as Embedded Domain Specific Languages
       \\- Many useful features
     \end{block}
   }{
-    \begin{exampleblock}{2. Safe language}
-      ...
+    \begin{exampleblock}{Safe language}
+      - Automatic garbage collection
+      \\- Automatic bound checks
+      \\- No pointer arithmetic
+      \\- Static type safety
     \end{exampleblock}
   }{
-    \begin{alertblock}{3. Java interoperability}
-      ...
+    \begin{alertblock}{Java interoperability}
+      - Compiled to Java bytecode
+      \\- Can use existing Java libraries
+      \\- Good interaction with Java's rich ecosystem
+      \\- Chosen by some Java-compatible frameworks
     \end{alertblock}
   }
 
@@ -69,9 +75,17 @@ object SquareOf5 extends App {
 \end{lstlisting}
 \end{column}
 \begin{column}{0.48\textwidth}
-\begin{lstlisting}[language=scala]
-...
-\end{lstlisting}
+\structure{Call stack} vs. \alert{object heap}
+\\[2mm]
+where are values stored?
+\\[5mm]
+\begin{block}{Concurrent threads:}
+do not share the \structure{call stack},
+\\share the \alert{object heap},  
+\end{block}
+% \begin{lstlisting}[language=scala]
+% ...
+% \end{lstlisting}
 \end{column}
 \end{columns}
 \end{frame}
@@ -85,5 +99,315 @@ object SquareOf5 extends App {
 
 \end{frame}
 
+\section{Scala in a nutshell}
+
+\begin{frame}[fragile]\frametitle{Creating a Printer class}
+~\\[-8mm]
+% \doSimpleExercise{What do these functions do?}
+\begin{columns}
+\begin{column}{0.52\textwidth}
+\begin{lstlisting}
+class Printer(val greeting: String) {
+  def printMessage(): Unit = println(greeting + "!")
+  def printNumber(x: Int): Unit = {
+    println("Number: " + x)
+  }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.44\textwidth}
+\only<1>{One \texttt{greeting} \alert{parameter}
+\\Two \alert{methods}}%
+\pause
+% \only<2>{
+\structure{\textbf{Using the class}}
+\begin{lstlisting}
+val printy = new Printer("Hi")
+          // instantiate
+printy.printMessage() // ?
+printy.printNumber(5) // ?
+\end{lstlisting}
+% }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Singleton objects}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.44\textwidth}
+\begin{lstlisting}
+object Test {
+  val Pi = 3.14
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.52\textwidth}
+\structure{\textbf{Using the object}}
+\begin{lstlisting}
+val x = Test.Pi * 5 * 5
+    // no need to instantiate
+\end{lstlisting}% }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Traits (similar to Java Interfaces)}    
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.58\textwidth}
+\begin{lstlisting}
+trait Logging {
+  def log(s: String): Unit // just declared
+  def warn(s: String) = log("WARN: " + s)
+  def error(s: String) = log("ERROR: " + s)
+}
+class PrintLogging extends Logging {
+  def log(s: String) = println(s)
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\structure{\textbf{Using traits}}
+\begin{lstlisting}
+val x = new PrintLogging
+val y = new Logging {
+  def log(s:String): Unit =
+    println(s)
+}
+\end{lstlisting}% }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Type parameters}    
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.58\textwidth}
+\begin{lstlisting}
+class Pair[A,B](val fst: A, val snd: B)
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\structure{\textbf{Using Pair}}
+\begin{lstlisting}
+val x: Pair[Int,String] = new Pair(4,"a")
+val y = new Pair(2,5) // infer type
+\end{lstlisting}% }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Lambdas (anonymous functions)}    
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.58\textwidth}
+\begin{lstlisting}
+val twice_a: Int=>Int = (x:Int) => x*2
+val twice_b = (x:Int) => x*2
+val twice_c: Int=>Int = x => x*2
+val twice_d: Int=>Int = _ * 2
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\structure{\textbf{Using lambdas}}
+\begin{lstlisting}
+val x = twice_a(4)
+\end{lstlisting}% }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Byname parameters (lazy)}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{lstlisting}
+def runTwice(body: =>Unit) = {
+  body
+  body
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.49\textwidth}
+\structure{\textbf{Using Byname}}
+\begin{lstlisting}
+runTwice { // prints "Hello" twice
+  println("Hello")
+}
+\end{lstlisting}% }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{``\texttt{for}'' expressions and comprehension}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.50\textwidth}
+\begin{lstlisting}[emph={foreach,map,flatMap}]
+for (i <- 0 until 10) println(i)
+// equivalent to
+0.until(10).foreach(i => println(i))
+
+val negatives_a =
+  for (i <- 0 until 10) yield -i
+val negatives_b =
+  (0 until 10).map(i => -1 * i)
+\end{lstlisting}
+\end{column}
+\begin{column}{0.48\textwidth}
+\pause
+% \structure{``\texttt{for-yield}'' expressions}
+\begin{lstlisting}[emph={foreach,map,flatMap}]
+val pairs_a =
+  for (x <- 0 until 4;
+       y <- 0 until 4) yield (x, y)
+val pairs_b =
+  (0 until 4).flatMap(x =>
+    (0 until 4).map(y =>
+      (x, y)))
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Scala collections and string interpolation}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.46\textwidth}
+Common collections:
+\\~~\texttt{Seq[T]}, \texttt{List[T]}, \texttt{Set[T]}, \texttt{Map[K,V]}  
+\begin{lstlisting}
+val msgs_a: Seq[String] = Seq("Hello", "world!")
+val msgs_b: List[String]= "Hello"::"World"::Nil
+val msgs_c: Set[String]= Set("Hello", "world!")
+val msgs_d: Map[String,Int]= Map("Hello"->5, "world!"->6)
+\end{lstlisting}
+\end{column}
+\begin{column}{0.52\textwidth}
+String interpolation:
+\begin{lstlisting}
+val number = 7
+val msg =
+  s"After \§number comes \§{number+1}!"
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Pattern matching}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.56\textwidth}
+\begin{lstlisting}
+val successors =
+  Map(1 -> 2, 2 -> 3, 3 -> 4)
+successors.get(5) match {
+  case Some(n) =>
+    println(s"Successor is: \§n")
+  case None    =>
+    println("Could not find successor.")
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{lstlisting}
+trait IntOrError
+case class MyInt(i:Int)      extends IntOrError
+case class MyError(e:String) extends IntOrError
+
+//...
+def show(ie: IntOrError)
+  ie match {
+    case MyInt(i)   => println(s"Number: \§i")
+    case MyError(e) => println(s"Error: \§e")
+  }
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Operator overloading}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.56\textwidth}
+\begin{lstlisting}
+class Position(val x: Int, val y: Int) {
+  def +(that: Position) =
+    new Position(x + that.x, y + that.y)
+  def *(n: Int) =
+    new Position(x * n, y * n)
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.42\textwidth}
+\structure{Using operators}
+\begin{lstlisting}
+val p1 = new Position(3,4)
+val p2 = p1 + p1 * 2 //?
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Package objects}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.56\textwidth}
+\begin{lstlisting}
+package cp
+package object practical {
+  def log(msg: String): Unit =
+    println(s"${Thread.currentThread.getName}: $msg")
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.42\textwidth}
+The \texttt{log} function is used throughout these lessons
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}\frametitle{Wrap up}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item Stack and Heap
+  \item Singleton objects
+  \item Traits (similar to Java Interfaces)
+  \item Type parameters
+  \item Lambdas (anonymous functions)
+  \item Byname parameters (lazy)
+\end{itemize}
+\end{column}
+\begin{column}{0.54\textwidth}
+\begin{itemize}
+  \item ``\texttt{for}'' expressions
+  \item ``\texttt{for}'' comprehension
+  \item Scala collections and string interpolation
+  \item Pattern matching
+  \item Operator overloading
+  \item Package objects
+\end{itemize}
+\end{column}
+\end{columns}
+
+    
+
+
+\end{frame}
 
 \end{document}
