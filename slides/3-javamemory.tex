@@ -180,53 +180,445 @@ object ThreadsSleep extends App {
 \end{frame}
 
 
+\begin{frame}%\frametitle{Life-cycle of a thread}
+  \centering
+  % \includegraphics[width=1\textwidth]{src/img/life-cycle-of-a-thread.png}
+  % \fromAuthor[width=\textwidth]{https://seeandselect.com/popedaze/life-cycle-of-a-thread}{life-cycle-of-a-thread.png}
+  \fromAuthor[width=\textwidth]{https://static.javatpoint.com/core/images/life-cycle-of-a-thread.png}{life-cycle-of-a-thread.png}
+\end{frame}
+
 \begin{frame}[fragile]\frametitle{Nondeterministic thread execution}
-    ...
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{itemize}
+  \item \texttt{``New thread''} printed always at the end
+  \item Other prints not always in the same order -- nondeterministic execution
+  \item Common in concurrent applications -- what makes it so hard
+  \item Note: \texttt{join} also forces all memory writes from the threads before proceeding
+\end{itemize}
+
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{lstlisting}[emph={sleep,log,thread,join}]
+object ThreadsNondeterminism extends App {
+ val t = thread { log("New thread running.") }
+     log("...")
+     log("...")
+     t.join()
+     log("New thread joined.")
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
 \end{frame}
 
 
-\section{Atomic Execution}
-\begin{frame}\frametitle{...}
+\section{Control of the execution order}
+
+\begin{frame}[fragile]\frametitle{Atomic Execution}
+\begin{itemize}
+  \item \texttt{join} provides guarantees that other threads terminated
+  \item Not enough -- we may want to inform other treads without terminating
+\end{itemize}
+
+\textbf{Example 1: shared counter for unique IDs}
+\begin{lstlisting}[emph={sleep,log,thread,join}]
+object ThreadsUnprotectedUid extends App {
+  var uidCount = 0L
+  def getUniqueId() = {
+    val freshUid = uidCount + 1
+    uidCount = freshUid
+    freshUid
+}
+\end{lstlisting}
+
+\structure{What can go wrong?}
 \end{frame}
 
 
-\section{Reordering}
-\begin{frame}\frametitle{...}
+\begin{frame}[fragile]\frametitle{Atomic Execution}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join}]
+...
+def printUniqueIds(n: Int): Unit = {
+  val uids = for (i<- 0 until n) yield getUniqueId()
+  log(s"Generated uids: \§uids")
+}
+val t = thread { printUniqueIds(5) }
+printUniqueIds(5)
+t.join()
+...
+\end{lstlisting}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{lstlisting}[emph={sleep,log,thread,join}]
+object ThreadsNondeterminism extends App {
+ val t = thread { log("New thread running.") }
+     log("...")
+     log("...")
+     t.join()
+     log("New thread joined.")
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\only<1>{\structure{What do you expect?}}%
+\only<2>{\begin{block}{Race Condition}
+  when the \structure{output of a concurrent program} depends on \alert{how the statements are scheduled}.
+\end{block}}
+\end{frame}
+
+\begin{frame}\frametitle{Updating counter in parallel}
+  \centering
+  \code{val freshUid = uidCount +  1 ;  uidCount = freshUid  ;  freshUid}
+
+  \medskip
+  
+  \fromBookW{40}{26mm}{151mm}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{``Synchronized'' to the rescue}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join}]
+def getUniqueId() =
+   this.synchronized {
+      val freshUid = uidCount + 1
+      uidCount = freshUid
+      freshUid
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.49\textwidth}
+\texttt{synchronized} is:
+\begin{itemize}
+  \item a fundamental Scala/Java construct for atomic executions
+  \item can be called in \structure{any object} (or instance of a class)
+  \item ensures atomic execution wrt the object
+  \item we say \code{obj.synchronized}
+    \begin{itemize}
+      \item \alert{acquires} the \structure{lock/monitor} of \structure{obj} at the start
+      \item \alert{releases} the \structure{lock/monitor} of \structure{obj} at the end
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
 \end{frame}
 
 
-\section{Locks and synchronization}
-\begin{frame}\frametitle{...}
+\begin{frame}\frametitle{Updating counter in parallel atomically}
+  \centering  
+  \fromBookW{41}{26mm}{135mm}
+\end{frame}
+
+\begin{frame}%\frametitle{Life-cycle of a thread}
+  \centering
+  \fromAuthor[width=\textwidth]{https://static.javatpoint.com/core/images/life-cycle-of-a-thread.png}{life-cycle-of-a-thread.png}
+\end{frame}
+
+
+\begin{frame}\frametitle{Reordering}
+\centering
+\begin{itemize}
+  \item using the \texttt{synchronized} statement has some (not too large) overhead
+  \item not using \texttt{synchronized} can easily lead to errors, even if all seems correct
+\end{itemize}
+
+{\large \structure{Find the bug in the next slide...}}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Find the bug}
+\begin{lstlisting}[emph={assert,sleep,log,thread,join}]
+object ThreadSharedStateAccessReordering extends App {
+  for (i <- 0 until 100000) {
+    var a = false
+    var b = false
+    var x = -1
+    var y = -1
+    val t1 = thread {
+      a = true
+      y = if (b) 0 else 1
+    }
+    val t2 = thread {
+      b = true
+      x = if (a) 0 else 1
+    }
+    t1.join()
+    t2.join()
+    assert(!(x==1 && y==1), s"x=\§x, y=\§y")
+  }
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}\frametitle{Reordering within threads}
+\begin{itemize}
+  \item The previous code can raise an error: both \texttt{x} and \texttt{y} can become 1!
+
+  \item JVM can reorder statements in a thread when they seem to be independent.
+
+  \item Because some processors do not always execute instructions in the expected order, to increase performance.
+  \item (Known as ``weak memory model'')
+  \item A \texttt{synchronized} block would solve this:
+    \begin{itemize}
+      \item also enclosing each assignment in a \texttt{synchronized} block
+      \item \texttt{synchronized} sets up a \emph{memory barrier} 
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]\frametitle{Locks and synchronization}
+\begin{itemize}
+  \item every object has a \emph{lock}
+  \item a running \alert{thread} can \structure{aquire} multiple locks from different objects
+\end{itemize}
+
+\textbf{Example 2: Logging Bank Transfers}
+\begin{lstlisting}[emph={assert,sleep,log,thread,join,synchronized}]
+object SynchronizedNesting extends App {
+   import scala.collection._
+   
+   private val transfers = mutable.ArrayBuffer[String]()
+   def logTransfer(name: String, n: Int) = transfers.synchronized {
+     transfers += s"transfer to account '\§name' = \§n"
+   }
+   class Account(val name: String, var money: Int)
+   def add(account: Account, n: Int) = account.synchronized {
+       account.money += n
+       if (n > 10) logTransfer(account.name, n)
+   }
+   ...
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Locks and synchronization}
+\begin{lstlisting}[emph={assert,sleep,log,thread,join,synchronized}]
+   private val transfers = mutable.ArrayBuffer[String]()
+   def logTransfer(name: String, n: Int) = transfers.synchronized {
+     transfers += s"transfer to account '\§name' = \§n"
+   }
+   class Account(val name: String, var money: Int)
+   def add(account: Account, n: Int) = account.synchronized {
+       account.money += n
+       if (n > 10) logTransfer(account.name, n)
+   }
+
+   val jane = new Account("Jane", 100)
+   val john = new Account("John", 200)
+   val t1 = thread { add(jane, 5) }
+   val t2 = thread { add(john, 50) }
+   val t3 = thread { add(jane, 70) } // will not corrupt Jane's account
+   t1.join(); t2.join(); t3.join()
+   log(s"--- transfers ---\n\§transfers")
+\end{lstlisting}
 \end{frame}
 
 
 \section{Deadlocks}
-\begin{frame}\frametitle{...}
+
+\begin{frame}[fragile]\frametitle{Deadlocks -- the dark side of locks}
+
+\begin{alertblock}{Deadlock}
+  when two or more executions wait for each other before proceeding
+\end{alertblock}
+
+\begin{itemize}
+  \item Studied in the first module with prof. Nelma Moreira
+  \item \structure{Dining philosophers} is a typical example
+  \item Often caused by locks that are not released at the right time
+\end{itemize}
+
+\begin{lstlisting}[emph={assert,sleep,log,thread,join,synchronized}]
+object SynchronizedDeadlock extends App {
+  import SynchronizedNesting.Account
+  def send(a: Account, b: Account, n: Int) = a.synchronized {
+    b.synchronized {
+      a.money -= n
+      b.money += n
+    }
+  }
+  ... // can this go wrong?
+}
+\end{lstlisting}
 \end{frame}
 
+
+\begin{frame}[fragile]\frametitle{Deadlocks -- the dark side of locks}
+\begin{lstlisting}[emph={assert,sleep,log,thread,join,synchronized}]
+  def send(a: Account, b: Account, n: Int) = a.synchronized {
+    b.synchronized {
+      a.money -= n
+      b.money += n
+    }
+  }
+
+  val a = new Account("Jack", 1000)
+  val b = new Account("Jill", 2000)
+  val t1 = thread { for (i<- 0 until 100) send(a, b, 1) }
+  val t2 = thread { for (i<- 0 until 100) send(b, a, 1) }
+  t1.join(); t2.join()
+  log(s"a = ${a.money}, b = ${b.money}")
+\end{lstlisting}
+
+{\Large \pause It works but... \pause \alert{it can deadlock}}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Possible fix: fix order}
+
+\begin{itemize}
+  \item always acquire locks in the same order
+  \item need a total order on locks
+  \item we can use the getUniqueId (Example 1)
+\end{itemize}
+    
+\begin{lstlisting}[emph={getUniqueId,sleep,log,thread,join,synchronized}]
+import SynchronizedProtectedUid.getUniqueId
+class Account(val name: String, var money: Int) {
+  val uid = getUniqueId()
+}
+\end{lstlisting}
+\pause
+\begin{lstlisting}[emph={assert,sleep,log,thread,join,synchronized}]
+def send(a1: Account, a2: Account, n: Int) {
+  def adjust() {
+    a1.money -= n
+    a2.money += n
+  }
+  if (a1.uid < a2.uid)  a1.synchronized{ a2.synchronized{ adjust() }}
+  else                  a2.synchronized{ a1.synchronized{ adjust() }}
+}
+\end{lstlisting}
+\end{frame}
 
 \section{Guarded blocks}
-\begin{frame}\frametitle{...}
+
+\begin{frame}\frametitle{Guarded blocks}
+\begin{alertblock}{Guarded block (for us)}
+  a \structure{block of code} that \alert{waits for a condition} before running in a thread
+\end{alertblock}
+
+\begin{block}{Example 3: Thread pool with a queue of tasks}
+  \begin{itemize}
+    \item Creating \structure{new threads} in Java is \alert{expensive} and \alert{avoidable}
+    \item Usually we re-use threads, by maintaining a set of waiting threads
+    \item This set is call a thread pool
+      \begin{itemize}
+        \item Scala already provides thread pools
+        \item We first create our own
+      \end{itemize}
+  \end{itemize}
+\end{block}
 \end{frame}
 
 
-\section{Interrupting threads}
-\begin{frame}\frametitle{...}
+\begin{frame}[fragile]\frametitle{}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.65\textwidth}
+\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join}]
+ import scala.collection._
+ object SynchronizedBadPool extends App {
+  // our set of tasks
+  private val tasks = mutable.Queue[()=>Unit]()
+ 
+  // our single working thread
+  val worker = new Thread {
+    def poll(): Option[()=>Unit] = 
+      asks.synchronized {
+       if (tasks.nonEmpty) Some(tasks.dequeue())
+       else                None
+      }
+    // keep on trying to run forever!
+    override def run() = while (true)
+      poll() match {
+        case Some(task) => task()
+        case None =>
+    }
+  }
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\begin{lstlisting}[emph={sleep,log,thread,join}]
+  // starting the worker as a daemon
+  worker.setName("Worker")
+  worker.setDaemon(true)
+  worker.start()
+
+  def asynchr(body: =>Unit) =
+    tasks.synchronized {
+      tasks.enqueue(()=>body)
+    }
+
+  asynchr{ log("Hello")  }
+  asynchr{ log(" world!")}
+  Thread.sleep(5000)
+}
+
+
+
+$~$
+\end{lstlisting}
+\end{column}
+\end{columns}
 \end{frame}
 
 
-\section{Volatile variables}
-\begin{frame}\frametitle{...}
+\begin{frame}\frametitle{Note on daemon threads}
+% \splittwo{
+  \begin{alertblock}{Normal}
+    \begin{itemize}
+      \item not the default
+      \item have lower priority
+      \item terminated automatically when JVM terminates
+      \item in other words, do not prevent the JVM from terminating
+      \item (the JVM terminates when `normal' tasks terminate)
+    \end{itemize}    
+  \end{alertblock}
 \end{frame}
+
+
+\begin{frame}\frametitle{Bad busy-waiting}
+    
+  \begin{block}{Busy-waiting is bad}
+    \begin{itemize}
+      \item needlessly uses processor power (and drains the battery)
+      \item after executing the previous code the \texttt{worker} will keep on running (unless you set in SBT \code{set fork := true},)
+      \item in general, we want the \texttt{worker} to enter a waiting state
+    \end{itemize}
+    
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}\frametitle{Interrupting threads}
+\end{frame}
+
+
+\begin{frame}\frametitle{Volatile variables}
+\end{frame}
+
 
 
 \section{The Java Memory Model}
+
 \begin{frame}\frametitle{...}
 \end{frame}
 
 
-\section{Immutable objects and final fields}
-\begin{frame}\frametitle{...}
+\begin{frame}\frametitle{Immutable objects and final fields}
 \end{frame}
 
 

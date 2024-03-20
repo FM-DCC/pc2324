@@ -296,6 +296,8 @@
 }
 
 \newcommand{\code}[1]{{\relsize{-1}\ttfamily #1}}
+% \definecolor{mydarkgreen}{rgb}{0,0.6,0}
+% \newcommand{\bash}[1]{\lstinline[basicstyle=\ttfamily\relsize{-0.5}\color{mydarkgreen},keywordstyle=\bf\sffamily\color{purple},columns=fullflexible,keepspaces,literate=*]|#1|}
 
 \lstdefinestyle{tiny}{basicstyle=\ttfamily\relsize{-7}}
 
@@ -334,6 +336,19 @@
   ~\\[-7mm]
   \text{{\tiny in \emph{``Learning Concurrent}
                       \emph{Programming in Scala''}, pg.\,#2}}
+  \\[0mm]
+  \end{array}\right]$}
+\end{tabular}
+}
+
+\newcommand{\fromAuthor}[3][width=\textwidth]{
+\begin{tabular}{@{}r@{}}
+\includegraphics[#1]%
+  {src/img/#3}
+  \\[-2mm]
+  \textcolor{myGray}{$\left[\begin{array}{@{}r@{}}
+  ~\\[-7mm]
+  \text{{\tiny in #2}}
   \\[0mm]
   \end{array}\right]$}
 \end{tabular}

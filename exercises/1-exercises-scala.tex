@@ -83,8 +83,8 @@ Implement a compose method with the following signature:
 \begin{lstlisting}
 def compose[A, B, C](g: B => C, f: A => B): A => C = ???
 \end{lstlisting}
-This method must return a function h, which is the composition of the
-functions f and g.
+This method must return a function \code{h}, which is the composition of the
+functions \code{f} and \code{g}.
 \end{myExercise}
 
 \begin{myExercise}
@@ -92,22 +92,22 @@ Implement a fuse method with the following signature:
 \begin{lstlisting}
 def fuse[A, B](a: Option[A], b: Option[B]): Option[(A, B)] = ???
 \end{lstlisting}
-The resulting Option object should contain a tuple of values from the Option objects a and b, given that both a and b are non-empty. Use for- comprehensions
+The resulting \code{Option} object should contain a tuple of values from the Option objects \code{a} and \code{b}, given that both \code{a} and \code{b} are non-empty. Use for-comprehensions
 \end{myExercise}
 
 \begin{myExercise}
-Implement a check method, which takes a set of values of type T and a function of type \code{T => Boolean}:
+Implement a check method, which takes a set of values of type \code{T} and a function of type \code{T => Boolean}:
 \begin{lstlisting}
 def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = ???
 \end{lstlisting}
-The method must return true if and only if the pred function returns true for all the values in xs without throwing an exception. Use the check method as follows:
+The method must return true if and only if the \code{pred} function returns true for all the values in \code{xs} without throwing an exception. Use the check method as follows:
 \begin{lstlisting}
 check(0 until 10)(40 / _ > 0)
 \end{lstlisting}
 \note{The check method has a curried definition: instead of just one parameter list, it has two of them. Curried definitions allow a nicer syntax when calling the function, but are otherwise semantically equivalent to single-parameter list definitions.}
 \end{myExercise}
 
-\ex{Modify the Pair class from this chapter so that it can be used in a pattern match.
+\ex{Modify the \code{Pair} class from the theoretical lessons so that it can be used in a pattern match.
 % \note{If you haven't already done so, familiarize yourself with pattern matching in Scala.}
 }
 
@@ -119,13 +119,12 @@ def permutations(x: String): Seq[String]
 \end{myExercise}
 
 \begin{myExercise}
-Implement a combinations function that, given a sequence of elements, produces an iterator over all possible combinations of length n. A combination is a way of selecting elements from the collection so that every element is selected once, and the order of elements does not matter. For example, given a collection Seq(1, 4, 9, 16), combinations of length 2 are Seq(1, 4), Seq(1, 9), Seq(1, 16), Seq(4, 9), Seq(4, 16), and Seq(9, 16). The combinations function has the following signature:
+Implement a combinations function that, given a sequence of elements, produces an iterator over all possible combinations of length \code{n}. A combination is a way of selecting elements from the collection so that every element is selected once, and the order of elements does not matter. For example, given a collection \code{Seq(1,4,9,16)}, combinations of length 2 are \code{Seq(1,4)}, \code{Seq(1,9)}, \code{Seq(1,16)}, \code{Seq(4,9)}, \code{Seq(4,16)}, and \code{Seq(9,16)}. The combinations function has the following signature:
 \begin{lstlisting}
 def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]]
 \end{lstlisting}
 See the Iterator API in the standard library documentation
 \end{myExercise}
-
 
 \begin{myExercise}
 Implement a method that takes a regular expression, and returns a partial function from a string to lists of matches within that string:
