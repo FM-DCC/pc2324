@@ -599,8 +599,99 @@ $~$
     \end{itemize}
     
   \end{block}
+\end{frame}
+
+\begin{frame}\frametitle{Avoiding busy-waiting}
+\centering
+
+{\Large \alert{synchronized} + \structure{wait} + \structure{notify}}
+
+\begin{itemize}
+  \item these are methods that every Java/Scala object has
+  \item \structure{wait}:
+    \begin{itemize}
+      \item needs the lock
+      \item puts the thread in a \alert{waiting} state
+      \item releases the lock until activation
+    \end{itemize}
+  \item \structure{notify}:
+    \begin{itemize}
+      \item needs the lock
+      \item \alert{activates} all waiting threads
+    \end{itemize}
+  \item Note that the JVM can decide to call \texttt{wait} on its own -- \alert{spurious wakeups} -- needing to re-enter the \emph{wait}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Wait-notify example}
+\begin{lstlisting}[emph={sleep,log,thread,join,wait,notify}]
+object SynchronizedGuardedBlocks extends App {
+  val lock = new AnyRef
+  var message: Option[String] = None
+  val greeter = thread {
+    lock.synchronized {
+      while (message == None) lock.wait() // non-busy waiting for a message
+      log(message.get)                    // it will eventually log!
+    }
+  }
+  lock.synchronized {
+    message = Some("Hello!")
+    lock.notify()                    // awakes the (possibly) locked thread
+  }
+  greeter.join()
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Example 3 -- without busy-waiting}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.65\textwidth}
+\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join,synchronized,wait,notify}]
+import scala.collection._
+object SynchronizedPool extends App {
+  private val tasks = mutable.Queue[()=>Unit]()
+
+  object Worker extends Thread {
+    setDaemon(true)
+    def poll() = tasks.synchronized {
+      while (tasks.isEmpty) tasks.wait()
+                         // now using wait
+      tasks.dequeue()
+    }
+    override def run() = while (true) {
+      val task = poll()
+      task()
+    }
+  }
+\end{lstlisting}
+\end{column}
+\begin{column}{0.40\textwidth}
+\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify}]
+  Worker.start()
+
+  def asynchr(body: =>Unit) =
+    tasks.synchronized {
+       tasks.enqueue(()=>body)
+       // now notifying
+       tasks.notify()
+    }
+
+  asynchr{ log("Hello")  }
+  asynchr{ log(" world!")}
+  Thread.sleep(500)
+}
+
+
+$~$
+\end{lstlisting}
+\end{column}
+\end{columns}
+
 
 \end{frame}
+
 
 
 \begin{frame}\frametitle{Interrupting threads}
