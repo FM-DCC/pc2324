@@ -694,11 +694,58 @@ $~$
 
 
 
-\begin{frame}\frametitle{Interrupting threads}
+\begin{frame}\frametitle{Interrupting threads -- \texttt{Thread.interrupt()}}
+\begin{itemize}
+  \item Our \texttt{Worker} can run forever (\texttt{while-true})
+  \item Terminates when the JVM terminates (daemon)
+  \item \texttt{Worker} can be terminated earlier while waiting
+    \begin{itemize}
+      \item \alert{\texttt{Worker.interrupt()}}
+      \item triggers an \alert{\texttt{InterruptedException}} that can be handled
+      \item if it was not waiting, then no exception is raised
+      \item instead a flag \alert{\texttt{Worker.isInterrupted}} becomes true
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Interrupting threads -- alternative with graceful shutdown}
+    
+\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify}]
+object Worker extends Thread {
+  var terminated = false
+  // "manually" terminate when asked
+  def poll(): Option[() => Unit] = tasks.synchronized {
+    while (tasks.isEmpty && !terminated) tasks.wait()
+    if (!terminated) Some(tasks.dequeue()) else None
+  }
+
+  import scala.annotation.tailrec
+  @tailrec override def run() = poll() match {
+    case Some(task) => task(); run()
+    case None =>
+  }
+  // "manually" ask to terminate
+  def shutdown() = tasks.synchronized {
+    terminated = true
+    tasks.notify()
+  }
+}
+\end{lstlisting}
+
 \end{frame}
 
 
-\begin{frame}\frametitle{Volatile variables}
+\begin{frame}\frametitle{Volatile variables -- Alternative to \texttt{lock.synchronized}}
+\begin{itemize}
+  \item using the \texttt{\alert{@volatile}} annotation
+  \\~
+  \item can be atomically read and modified
+  \item mostly used as status flag
+  \item are never reordered in a thread
+  \item writes are immediately visible to other threads
+  \item very cheap to read
+  \item not enough in many situations (e.g., \texttt{getUniqueID})
+\end{itemize}
 \end{frame}
 
 
