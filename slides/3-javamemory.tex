@@ -332,7 +332,7 @@ def getUniqueId() =
 \end{frame}
 
 
-\begin{frame}[fragile]\frametitle{Find the bug}
+\begin{frame}[fragile]\frametitle{Find the bug}\label{slide:ThreadSharedStateAccessReordering}
 \begin{lstlisting}[emph={assert,sleep,log,thread,join}]
 object ThreadSharedStateAccessReordering extends App {
   for (i <- 0 until 100000) {
@@ -745,16 +745,56 @@ object Worker extends Thread {
   \item writes are immediately visible to other threads
   \item very cheap to read
   \item not enough in many situations (e.g., \texttt{getUniqueID})
+  \item enough for previous example -- Slide~\ref{slide:ThreadSharedStateAccessReordering}
 \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]\frametitle{Example 4 -- Batman}
+\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify,volatile}]
+class Page(val txt: String, var position: Int)
 
-
-\section{The Java Memory Model}
-
-\begin{frame}\frametitle{...}
+object Volatile extends App {
+  val pages = for (i<- 1 to 5) yield
+    new Page("Na" * (100 - 20 * i) + " Batman!", -1)
+  @volatile var found = false
+  for (p <- pages) yield thread {
+    var i = 0
+    while (i < p.txt.length && !found)
+      if (p.txt(i) == '!') {
+        p.position = i
+        found = true
+      } else i += 1
+  }
+  while (!found) {}
+  log(s"results: \§{pages.map(_.position)}")
+}
+\end{lstlisting}
 \end{frame}
 
+
+\section{The Java Memory Model overview}
+
+\begin{frame}\frametitle{Happens-before relation}
+\centering
+
+\structure{action $\alpha$} \alert{happens-before} \structure{action $\beta$}\\
+means  \structure{action $\beta$} sees the memory writes of \structure{action $\alpha$}
+
+\begin{itemize}
+\item \textbf{Program order:} $\alpha$ in a thread \alert{HB} every subsequent $\beta$ in that program and thread
+\item \textbf{Monitor locking:} unlocking \alert{HB} every subsequent locking (of the same lock)
+\item \textbf{Volatile fields:} writing to a volatile field \alert{HB} every of its subsequent read
+\item \textbf{Thread start:} calling \texttt{thrd.start()} \alert{HB} any actions of \texttt{thrd}
+\item \textbf{Thread termination:} $\alpha$ in a thread \alert{HB} a \texttt{join()} on that thread.
+\item \textbf{Transitivity:} if $\alpha$ \alert{HB} $\beta$ and $\beta$ \alert{HB} $\gamma$, then a$\alpha$ \alert{HB} $\gamma$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{title}
+    
+
+
+\end{frame}
 
 \begin{frame}\frametitle{Immutable objects and final fields}
 \end{frame}
