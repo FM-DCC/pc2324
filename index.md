@@ -13,9 +13,8 @@ The goal of this course is to introduce students to the fundamental theoretic an
 
 # Lectures
 
-- __4 Apr 24__: (T) Introduction to the second module. Overview of Scala. ([1-intro.pdf](slides/1-intro.pdf))
-- __11 Apr 24__: (P) Exercises on Scala. ([ex-scala.pdf](exercises/ex-scala.pdf))</br>
-(T) tbd.
+- __4 Apr 24__: [T] Introduction to the second module. Overview of Scala ([1-intro.pdf](slides/1-intro.pdf)).
+- __11 Apr 24__: [P] Exercises on Scala ([ex-scala.pdf](exercises/ex-scala.pdf)). [T] tbd.
 <!-- Introduction ([1-intro.pdf](slides/1-intro.pdf)) -->
 
 
