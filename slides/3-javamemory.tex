@@ -788,17 +788,24 @@ means  \structure{action $\beta$} sees the memory writes of \structure{action $\
 \item \textbf{Thread termination:} $\alpha$ in a thread \alert{HB} a \texttt{join()} on that thread.
 \item \textbf{Transitivity:} if $\alpha$ \alert{HB} $\beta$ and $\beta$ \alert{HB} $\gamma$, then a$\alpha$ \alert{HB} $\gamma$
 \end{itemize}
-\end{frame}
 
-\begin{frame}[t]\frametitle{title}
-    
-
-
+\pause
+\structure{Data race:} when a write to memory does not \alert{happen-before} its intended read.
 \end{frame}
 
 \begin{frame}\frametitle{Immutable objects and final fields}
+...
 \end{frame}
 
+\begin{frame}[t]\frametitle{Summary of operators}
+\begin{itemize}
+  \item synchronize
+  \item wait
+  \item notify
+  \item ...
+\end{itemize}
+
+\end{frame}
 
 % \begin{frame}[fragile]\frametitle{Package objects}
 % ~\\[-8mm]
