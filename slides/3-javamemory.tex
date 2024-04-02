@@ -793,8 +793,45 @@ means  \structure{action $\beta$} sees the memory writes of \structure{action $\
 \structure{Data race:} when a write to memory does not \alert{happen-before} its intended read.
 \end{frame}
 
-\begin{frame}\frametitle{Immutable objects and final fields}
-...
+\begin{frame}[fragile]\frametitle{Immutable objects and final fields}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.42\textwidth}
+\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join,synchronized,wait,notify}]
+class Foo(
+  final val a: Int, val b: Int, c: Int)
+
+class Foo { // Java code below
+  final private int a\§;
+  final private int b\§;
+  final private int c\§;
+  final public int a() {
+    return a\§; }
+  public int b() { return b\§; }
+  public Foo(int a,
+             int b,
+             int c) {
+    a\§ = a; b\§ = b; c\§ = c;
+  }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.56\textwidth}
+\begin{itemize}
+  \item \structure{Final} fields: cannot be \alert{overridden}
+  \item \structure{val}: cannot be \alert{updated}
+  \item \structure{val}s are \structure{final}
+  \item Some collections are immutable (e.g. \code{List}), but contain non-final fields
+    \begin{itemize}
+      \item need synchronisation when shared
+    \end{itemize}
+  \item Objects with only non-final fields
+    \begin{itemize}
+      \item do not need synchronisation when shared
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}[t]\frametitle{Summary of operators}
