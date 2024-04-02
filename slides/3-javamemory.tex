@@ -435,7 +435,7 @@ object SynchronizedNesting extends App {
 
 \begin{itemize}
   \item Studied in the first module with prof. Nelma Moreira
-  \item \structure{Dining philosophers} is a typical example
+  % \item \structure{Dining philosophers} is a typical example
   \item Often caused by locks that are not released at the right time
 \end{itemize}
 
@@ -527,7 +527,7 @@ def send(a1: Account, a2: Account, n: Int) {
 ~\\[-8mm]
 \begin{columns}
 \begin{column}{0.65\textwidth}
-\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join}]
+\begin{lstlisting}[emph={synchronized,printUniqueIds,sleep,log,thread,join}]
  import scala.collection._
  object SynchronizedBadPool extends App {
   // our set of tasks
@@ -550,7 +550,7 @@ def send(a1: Account, a2: Account, n: Int) {
 \end{lstlisting}
 \end{column}
 \begin{column}{0.40\textwidth}
-\begin{lstlisting}[emph={sleep,log,thread,join}]
+\begin{lstlisting}[emph={synchronized,sleep,log,thread,join}]
   // starting the worker as a daemon
   worker.setName("Worker")
   worker.setDaemon(true)
@@ -797,22 +797,23 @@ means  \structure{action $\beta$} sees the memory writes of \structure{action $\
 ~\\[-8mm]
 \begin{columns}
 \begin{column}{0.42\textwidth}
-\begin{lstlisting}[emph={printUniqueIds,sleep,log,thread,join,synchronized,wait,notify}]
-class Foo(
-  final val a: Int, val b: Int, c: Int)
-
-class Foo { // Java code below
+\begin{lstlisting}[emph={Foo,log,thread,join,synchronized,wait,notify},morekeywords={public}]
+class Foo( final val a: Int,
+                 val b: Int,
+                     c: Int)
+// Encoding as Java:
+class Foo {
   final private int a\§;
   final private int b\§;
   final private int c\§;
-  final public int a() {
-    return a\§; }
-  public int b() { return b\§; }
+  final public int a()
+    { return a\§; }
+  public int b()
+    { return b\§; }
   public Foo(int a,
              int b,
              int c) {
-    a\§ = a; b\§ = b; c\§ = c;
-  }
+    { a\§ = a; b\§ = b; c\§ = c; }
 }
 \end{lstlisting}
 \end{column}
@@ -821,13 +822,13 @@ class Foo { // Java code below
   \item \structure{Final} fields: cannot be \alert{overridden}
   \item \structure{val}: cannot be \alert{updated}
   \item \structure{val}s are \structure{final}
-  \item Some collections are immutable (e.g. \code{List}), but contain non-final fields
-    \begin{itemize}
-      \item need synchronisation when shared
-    \end{itemize}
   \item Objects with only non-final fields
     \begin{itemize}
-      \item do not need synchronisation when shared
+      \item \alert{do not need synchronisation} when shared
+    \end{itemize}
+  \item Some collections are immutable (e.g. \code{List}), but contain non-final fields
+    \begin{itemize}
+      \item \alert{need synchronisation} when shared
     \end{itemize}
 \end{itemize}
 \end{column}
@@ -835,13 +836,32 @@ class Foo { // Java code below
 \end{frame}
 
 \begin{frame}[t]\frametitle{Summary of operators}
+\Large
+\splittwo{0.4}{0.4}{
 \begin{itemize}
-  \item synchronize
-  \item wait
-  \item notify
-  \item ...
+  \item \code{Thread.sleep}
+  % manage
+  \item \code{thr.start}
+  \item \code{thr.join}
+  \\~
+  % atomic execution with locks
+  \item \alert{\code{lock.synchronized}}
+  \item \code{lock.wait}
+  \item \code{lock.notify}
 \end{itemize}
+}{
+\begin{itemize}
+  \item \code{thr.interrupt()}
+  \item \code{thr.isInterrupted}
+  \\~
+  \item \code{@volatile var x}
+\end{itemize}
+}
+\end{frame}
 
+\begin{frame}\frametitle{Recall the Life-cycle of a thread}
+  \centering
+  \fromAuthor[width=\textwidth]{https://static.javatpoint.com/core/images/life-cycle-of-a-thread.png}{life-cycle-of-a-thread.png}
 \end{frame}
 
 % \begin{frame}[fragile]\frametitle{Package objects}
