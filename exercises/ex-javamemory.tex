@@ -9,7 +9,7 @@
 \usepackage{url}
 % \input{macros/tp-macros}
 
-\setHeader{2. Exercises: Concurrency in Java and its memory model (WiP)}%
+\setHeader{2. Exercises: Concurrency in Java and its memory model}%
  {Concurrent Programming -- Part 2}%
 
 
@@ -28,16 +28,18 @@ The exercises are not ordered in any particular order, but some assume earlier e
 
 % blindly copied:
 
-\begin{myExercise}Implement a parallel method, which takes two computation blocks,~\code{a} and~\code{b}, and starts each of them in a new thread. The method must return a tuple with the result values of both the computations. It should have the following signature:
+\begin{myExercise}Implement a \code{parallel} method, which takes two computation blocks,~\code{a} and~\code{b}, and starts each of them in a new thread. The method must return a tuple with the result values of both the computations. It should have the following signature:
 \begin{lstlisting}
 def parallel[A, B](a: =>A, b: =>B): (A, B)
 \end{lstlisting}
+Place the \code{thread} and the \code{log} function, defined in the theoretical lessons, in a package object and use them when defining \code{parallel}.
 \end{myExercise}
 
-\begin{myExercise}Implement a periodically method, which takes a time interval duration specified in milliseconds, and a computation block \code{b}. The method starts a thread that executes the computation block~\code{b} every duration milliseconds. It should have the following signature:
+\begin{myExercise}Implement a \code{periodically} method, which takes a time interval duration specified in milliseconds, and a computation block \code{b}. The method starts a thread that executes the computation block~\code{b} every duration milliseconds. It should have the following signature:
 \begin{lstlisting}
 def periodically(duration: Long)(b: =>Unit): Unit
 \end{lstlisting}
+Extra: try to use a daemon thread.
 \end{myExercise}
 
 \begin{myExercise}Implement a \code{SyncVar} class with the following interface:
@@ -48,17 +50,22 @@ class SyncVar[T] {
 }
 \end{lstlisting}
 A \code{SyncVar} object is used to exchange values between two or more threads.
-When created, the \code{SyncVar} object is empty: Calling get throws an exception
-Calling \code{put} adds a value to the \code{SyncVar} object
-After a value is added to a \code{SyncVar} object, we say that it is non-empty:
-Calling \code{get} returns the current value, and changes the state to empty Calling put throws an exception
-
+When created, the \code{SyncVar} object is \textbf{empty}:
+\begin{itemize}
+  \item calling \code{get} throws an exception, and
+  \item calling \code{put} adds a value to the \code{SyncVar} object.
+\end{itemize}
+After a value is added to a \code{SyncVar} object, we say that it is \textbf{non-empty}:
+\begin{itemize}
+  \item calling \code{get} returns the current value, and changes the state to empty, and
+  \item calling \code{put} throws an exception.
+\end{itemize}
 \end{myExercise}
 
-\begin{myExercise}The \code{SyncVar} object from the previous exercise can be cumbersome to use, due to exceptions when the \code{SyncVar} object is in an invalid state. Implement a pair of methods, isEmpty and nonEmpty, on the \code{SyncVar} object. Then, implement a producer thread that transfers a range of numbers 0 until 15 to the consumer thread that prints them.
+\begin{myExercise}The \code{SyncVar} object from the previous exercise can be cumbersome to use, due to exceptions when the \code{SyncVar} object is in an invalid state. Implement a pair of methods, \code{isEmpty} and \code{nonEmpty}, on the \code{SyncVar} object. Then, using these, implement a \textbf{producer thread} that transfers a range of numbers 0 until 15, and a \textbf{consumer thread} that receives these (using busy-waiting) and prints them. Run both threads in parallel.
 \end{myExercise}
 
-\begin{myExercise}Using the isEmpty and nonEmpty pair of methods from the previous exercise requires busy-waiting. Add the following methods to the \code{SyncVar} class:
+\begin{myExercise}Using the \code{isEmpty} and \code{nonEmpty} pair of methods from the previous exercise requires busy-waiting. Add the following methods to the \code{SyncVar} class:
 \begin{lstlisting}
 def getWait(): T
 def putWait(x: T): Unit
@@ -69,18 +76,19 @@ These methods have similar semantics as before, but go into the waiting state in
 \begin{myExercise}A \code{SyncVar} object can hold at most one value at a time. Implement a \code{SyncQueue} class, which has the same interface as the \code{SyncVar} class, but can hold at most \code{n} values. The \code{n} parameter is specified in the constructor of the \code{SyncQueue} class.
 \end{myExercise}
 
-\begin{myExercise}The send method in the Deadlocks slides was used to transfer money between the two accounts. The \code{sendAll} method takes a set accounts of bank accounts and a target bank account, and transfers all the money from every account in accounts to the target bank account. The \code{sendAll} method has the following signature:
+\begin{myExercise}The \code{send} method in the Deadlocks' slides was used to transfer money between the two accounts. The \code{sendAll} method takes a set accounts of bank accounts and a target bank account, and transfers all the money from every account in \code{accounts} to the target bank account. The \code{sendAll} method has the following signature:
 \begin{lstlisting}
 def sendAll(accounts: Set[Account], target: Account): Unit
 \end{lstlisting}
 Implement the \code{sendAll} method and ensure that a deadlock cannot occur.
 \end{myExercise}
 
-\begin{myExercise}Recall the asynchronous method from the Guarded blocks slides. This method stores the tasks in a First In First Out (FIFO) queue; before a submitted task is executed, all the previously submitted tasks need to be executed. In some cases, we want to assign priorities to tasks so that a high-priority task can execute as soon as it is submitted to the task pool. Implement a \code{PriorityTaskPool} class that has the asynchronous method with the following signature:
+\begin{myExercise}Recall the \code{asynchronous} method from the Guarded blocks' slides. This method stores the tasks in a First In First Out (FIFO) queue; before a submitted task is executed, all the previously submitted tasks need to be executed. In some cases, we want to assign priorities to tasks so that a high-priority task can execute as soon as it is submitted to the task pool. Implement a \code{PriorityTaskPool} class that has the \code{asynchronous} method with the following signature:
 \begin{lstlisting}
 def asynchronous(priority: Int)(task: =>Unit): Unit
 \end{lstlisting}
 A single worker thread picks tasks submitted to the pool and executes them. Whenever the worker thread picks a new task from the pool for execution, that task must have the highest priority in the pool.
+\note[Suggestion]{use the \texttt{scala.collection.mutable.PriorityQueue} data structure.}
 \end{myExercise}
 
 \begin{myExercise}Extend the \code{PriorityTaskPool} class from the previous exercise so that it supports any number of worker threads \code{p}. The parameter \code{p} is specified in the constructor of the \code{PriorityTaskPool} class.
@@ -90,7 +98,7 @@ A single worker thread picks tasks submitted to the pool and executes them. When
 \begin{lstlisting}
 def shutdown(): Unit
 \end{lstlisting}
-When the shutdown method is called, all the tasks with the priorities greater than important must be completed, and the rest of the tasks must be discarded. The important integer parameter is specified in the constructor of the \code{PriorityTaskPool} class.
+When the \code{shutdown} method is called, all the tasks with the priorities greater than \code{important} must be completed, and the rest of the tasks must be discarded. The \code{important} integer parameter is specified in the constructor of the \code{PriorityTaskPool} class.
 \end{myExercise}
 
 \begin{myExercise}Implement a \code{ConcurrentBiMap} collection, which is a concurrent bidirectional map. The invariant is that every key is mapped to exactly one value, and vice versa. Operations must be atomic. The concurrent bidirectional map has the following interface:
@@ -108,7 +116,7 @@ class ConcurrentBiMap[K, V] {
 Make sure that your implementation prevents deadlocks from occurring in the map.
 \end{myExercise}
 
-\begin{myExercise}Add a replace method to the concurrent bidirectional map from the previous exercise. The method should atomically replace a key-value pair with another key-value pair:
+\begin{myExercise}Add a \code{replace} method to the concurrent bidirectional map from the previous exercise. The method should atomically replace a key-value pair with another key-value pair:
 \begin{lstlisting}
 def replace(k1: K, v1: V, k2: K, v2: V): Unit
 \end{lstlisting}
@@ -117,11 +125,11 @@ def replace(k1: K, v1: V, k2: K, v2: V): Unit
 \begin{myExercise}Test the implementation of the concurrent bidirectional map from the earlier exercise by creating a test in which several threads concurrently insert millions of key-value pairs into the map. When all of them complete, another batch of threads must concurrently invert the entries in the map -- for any key-value pair \code{(k1, k2)}, the thread should replace it with a key-value pair \code{(k2, k1)}.
 \end{myExercise}
 
-\begin{myExercise}Implement a cache method, which converts any function into a memoized version of itself. The first time that the resulting function is called for any argument, it is called in the same way as the original function. However, the result is memoized, and subsequently invoking the resulting function with the same arguments must return the previously returned value:
+\begin{myExercise}Implement a \code{cache} method, which converts any function into a memoized version of itself. The first time that the resulting function is called for any argument, it is called in the same way as the original function. However, the result is memoized, and subsequently invoking the resulting function with the same arguments must return the previously returned value:
 \begin{lstlisting}
 def cache[K, V](f: K => V): K => V
 \end{lstlisting}
-Make sure that your implementation works correctly when the resulting function is called   simultaneously from multiple threads.
+Make sure that your implementation works correctly when the resulting function is called simultaneously from multiple threads.
 \end{myExercise}
 
 

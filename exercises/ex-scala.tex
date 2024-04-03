@@ -9,7 +9,7 @@
 \usepackage{url}
 % \input{macros/tp-macros}
 
-\setHeader{1. Exercises: Introduction to Scala (WiP)}%
+\setHeader{1. Exercises: Introduction to Scala}%
           {Concurrent Programming -- Part 2}%
           
 
@@ -79,7 +79,7 @@ If you are in the SBT shell and you modify the \bash{build.sbt} you need to relo
 \end{myExercise}
 
 \begin{myExercise}
-Implement a compose method with the following signature:
+Implement a \code{compose} method with the following signature:
 \begin{lstlisting}
 def compose[A, B, C](g: B => C, f: A => B): A => C = ???
 \end{lstlisting}
@@ -88,7 +88,7 @@ functions \code{f} and \code{g}.
 \end{myExercise}
 
 \begin{myExercise}
-Implement a fuse method with the following signature:
+Implement a \code{fuse} method with the following signature:
 \begin{lstlisting}
 def fuse[A, B](a: Option[A], b: Option[B]): Option[(A, B)] = ???
 \end{lstlisting}
@@ -96,15 +96,15 @@ The resulting \code{Option} object should contain a tuple of values from the Opt
 \end{myExercise}
 
 \begin{myExercise}
-Implement a check method, which takes a set of values of type \code{T} and a function of type \code{T => Boolean}:
+Implement a \code{check} method, which takes a set of values of type \code{T} and a function of type \code{T => Boolean}:
 \begin{lstlisting}
 def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = ???
 \end{lstlisting}
-The method must return true if and only if the \code{pred} function returns true for all the values in \code{xs} without throwing an exception. Use the check method as follows:
+The method must return true if and only if the \code{pred} function returns true for all the values in \code{xs} without throwing an exception. Use the \code{check} method as follows:
 \begin{lstlisting}
 check(0 until 10)(40 / _ > 0)
 \end{lstlisting}
-\note{The check method has a curried definition: instead of just one parameter list, it has two of them. Curried definitions allow a nicer syntax when calling the function, but are otherwise semantically equivalent to single-parameter list definitions.}
+\note{The \code{check} method has a curried definition: instead of just one parameter list, it has two of them. Curried definitions allow a nicer syntax when calling the function, but are otherwise semantically equivalent to single-parameter list definitions.}
 \end{myExercise}
 
 \ex{Modify the \code{Pair} class from the theoretical lessons so that it can be used in a pattern match.
@@ -112,7 +112,7 @@ check(0 until 10)(40 / _ > 0)
 }
 
 \begin{myExercise}
-Implement a permutations function, which, given a string, returns a sequence of strings that are lexicographic permutations of the input string:
+Implement a \code{permutations} function, which, given a string, returns a sequence of strings that are lexicographic permutations of the input string:
 \begin{lstlisting}
 def permutations(x: String): Seq[String]
 \end{lstlisting}
