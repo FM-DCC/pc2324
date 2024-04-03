@@ -704,13 +704,14 @@ $~$
       \item triggers an \alert{\texttt{InterruptedException}} that can be handled
       \item if it was not waiting, then no exception is raised
       \item instead a flag \alert{\texttt{Worker.isInterrupted}} becomes true
+      \item needed if the thread does not awake with \texttt{notify} (e.g., it is doing blocking I/O)
     \end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]\frametitle{Interrupting threads -- alternative with graceful shutdown}
     
-\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify}]
+\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify,shutdown}]
 object Worker extends Thread {
   var terminated = false
   // "manually" terminate when asked
