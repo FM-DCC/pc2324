@@ -1,0 +1,213 @@
+\documentclass[11pt]{article}
+
+\renewcommand\familydefault{\sfdefault}
+
+
+\input{macros/preamble}
+\input{macros/slides-macros}
+\input{macros/macros}
+\usepackage{url}
+% \input{macros/tp-macros}
+
+\setHeader{3. Exercises: Basic building blocks of concurrency (WiP)}%
+ {Concurrent Programming -- Part 2}%
+
+
+
+
+\begin{document}
+
+\myHeader
+
+These exercises are taken mainly from the book ``\emph{Learning Concurrent Programming in Scala}''.
+%
+Most of these require implementing new concurrent data structures using atomic variables and the CAS instruction, although they can also be solved using the synchronized statements.
+
+
+\begin{myExercise}
+Implement a custom \code{ExecutionContext} class called \code{PiggybackContext}, which executes \code{Runnable} objects on the same thread that calls the \code{execute} method. Ensure that a \code{Runnable} object executing on the \code{PiggybackContext} can also call the \code{execute} method and that exceptions are properly reported.
+\end{myExercise}
+
+\begin{myExercise}
+Implement a \code{TreiberStack} class, which implements a concurrent stack abstraction:
+\begin{lstlisting}
+class TreiberStack[T] {
+  def push(x: T): Unit = ???
+  def pop(): T = ???
+}
+\end{lstlisting}
+Use an atomic reference variable that points to a linked list of nodes that were previously pushed to the stack. Make sure that your implementation is lock-free and not susceptible to the ABA problem.
+\end{myExercise}
+
+\begin{myExercise}
+Implement a \code{ConcurrentSortedList} class, which implements a concurrent sorted list abstraction:
+\begin{lstlisting}
+class ConcurrentSortedList[T](implicit val ord: Ordering[T]) {
+  def add(x: T): Unit = ???
+  def iterator: Iterator[T] = ???
+}
+\end{lstlisting}
+Under the hood, the \code{ConcurrentSortedList} class should use a linked list of atomic references. Ensure that your implementation is lock-free and avoids ABA problems.
+The \code{Iterator} object returned by the iterator method must correctly traverse the elements of the list in ascending order under the assumption that there are no concurrent invocations of the add method.
+\end{myExercise}
+
+\begin{myExercise}
+If required, modify the \code{ConcurrentSortedList} class from the previous example so that calling the add method has the running time linear to the length of the list and creates a constant number of new objects when there are no retries due to concurrent add invocations.
+\end{myExercise}
+  
+\begin{myExercise}
+Implement a LazyCell class with the following interface:
+\begin{lstlisting}
+class LazyCell[T](initialization: =>T) {
+  def apply(): T = ???
+}
+\end{lstlisting}
+Creating a \code{LazyCell} object and calling the apply method must have the
+same semantics as declaring a lazy value and reading it, respectively.
+You are not allowed to use lazy values in your implementation.
+\end{myExercise}
+
+\begin{myExercise}
+Implement a \code{PureLazyCell} class with the same interface and semantics as the \code{LazyCell} class from the previous exercise. The \code{PureLazyCell} class assumes that the initialization parameter does not cause side effects, so it can be evaluated more than once.
+The apply method must be lock-free and should call the initialization as little as possible.
+\end{myExercise}
+
+\begin{myExercise}
+Implement a \code{SyncConcurrentMap} class that extends the \code{Map} API that can be found in the scala.collection.concurrent package.\footnote{\url{https://www.scala-lang.org/api/2.13.x/scala/collection/concurrent/Map.html}} Use the \code{synchronized} statement to protect the state of the concurrent map, captured by a traditional mutable map (from scala.collection.mutable.Map).
+\end{myExercise}
+
+% \begin{myExercise}
+% Implement a method \code{spawn} that, given a block of Scala code, starts a new JVM process and runs the specified block in the new process:
+% \begin{lstlisting}
+% def spawn[T](block: =>T): T = ???
+% \end{lstlisting}
+% Once the block returns a value, the \code{spawn} method should return the value from the child process. If the block throws an exception, the \code{spawn} method should throw the same exception.
+% Use Java serialization to transfer the block of code, its return value, and the potential exceptions between the parent and the child JVM processes.
+% \end{myExercise}
+
+\begin{myExercise}
+Augment the lock-free pool implementation from the theoretical lessons with a \code{foreach} operation, used to traverse all the elements in the pool. Then make another version of \code{foreach} that is both lock-free and linearizable.
+\end{myExercise}
+
+% \begin{myExercise}
+% Prove that the lock-free pool implementation from this chapter is correct.
+% \end{myExercise}
+
+% \begin{myExercise}
+% Currently, the remove operation of the lock-free pool implementation from this
+% chapter runs in O(P) worst-case time, where P is the number of processors on the machine. Improve the lock-free pool implementation so that the operations run in O(1) expected time, both in terms of the number of stored elements and the number of processors.
+% \end{myExercise}
+
+
+
+
+% % In the following set of exercises, you are required to implement higher-level concurrency abstractions in terms of basic JVM concurrency primitives. Some of these exercises introduce concurrent counterparts of sequential programming abstractions, and, in doing so, highlight important differences between sequential and concurrent programming. The exercises are not ordered in any particular order, but some of them rely on specific content from earlier exercises or this chapter:
+
+% % blindly copied:
+
+% \begin{myExercise}Implement a \code{parallel} method, which takes two computation blocks,~\code{a} and~\code{b}, and starts each of them in a new thread. The method must return a tuple with the result values of both the computations. It should have the following signature:
+% \begin{lstlisting}
+% def parallel[A, B](a: =>A, b: =>B): (A, B)
+% \end{lstlisting}
+% Place the \code{thread} and the \code{log} function, defined in the theoretical lessons, in a package object and use them when defining \code{parallel}.
+% \end{myExercise}
+
+% \begin{myExercise}Implement a \code{periodically} method, which takes a time interval duration specified in milliseconds, and a computation block \code{b}. The method starts a thread that executes the computation block~\code{b} every duration milliseconds. It should have the following signature:
+% \begin{lstlisting}
+% def periodically(duration: Long)(b: =>Unit): Unit
+% \end{lstlisting}
+% Extra: try to use a daemon thread.
+% \end{myExercise}
+
+% \begin{myExercise}Implement a \code{SyncVar} class with the following interface:
+% \begin{lstlisting}
+% class SyncVar[T] {
+%   def get(): T = ???
+%   def put(x: T): Unit = ???
+% }
+% \end{lstlisting}
+% A \code{SyncVar} object is used to exchange values between two or more threads.
+% When created, the \code{SyncVar} object is \textbf{empty}:
+% \begin{itemize}
+%   \item calling \code{get} throws an exception, and
+%   \item calling \code{put} adds a value to the \code{SyncVar} object.
+% \end{itemize}
+% After a value is added to a \code{SyncVar} object, we say that it is \textbf{non-empty}:
+% \begin{itemize}
+%   \item calling \code{get} returns the current value, and changes the state to empty, and
+%   \item calling \code{put} throws an exception.
+% \end{itemize}
+% \end{myExercise}
+
+% \begin{myExercise}The \code{SyncVar} object from the previous exercise can be cumbersome to use, due to exceptions when the \code{SyncVar} object is in an invalid state. Implement a pair of methods, \code{isEmpty} and \code{nonEmpty}, on the \code{SyncVar} object. Then, using these, implement a \textbf{producer thread} that transfers a range of numbers 0 until 15, and a \textbf{consumer thread} that receives these (using busy-waiting) and prints them. Run both threads in parallel.
+% \end{myExercise}
+
+% \begin{myExercise}Using the \code{isEmpty} and \code{nonEmpty} pair of methods from the previous exercise requires busy-waiting. Add the following methods to the \code{SyncVar} class:
+% \begin{lstlisting}
+% def getWait(): T
+% def putWait(x: T): Unit
+% \end{lstlisting}
+% These methods have similar semantics as before, but go into the waiting state instead of throwing an exception, and return once the \code{SyncVar} object is empty or non-empty, respectively.
+% \end{myExercise}
+
+% \begin{myExercise}A \code{SyncVar} object can hold at most one value at a time. Implement a \code{SyncQueue} class, which has the same interface as the \code{SyncVar} class, but can hold at most \code{n} values. The \code{n} parameter is specified in the constructor of the \code{SyncQueue} class.
+% \end{myExercise}
+
+% \begin{myExercise}The \code{send} method in the Deadlocks' slides was used to transfer money between the two accounts. The \code{sendAll} method takes a set accounts of bank accounts and a target bank account, and transfers all the money from every account in \code{accounts} to the target bank account. The \code{sendAll} method has the following signature:
+% \begin{lstlisting}
+% def sendAll(accounts: Set[Account], target: Account): Unit
+% \end{lstlisting}
+% Implement the \code{sendAll} method and ensure that a deadlock cannot occur.
+% \end{myExercise}
+
+% \begin{myExercise}Recall the \code{asynchronous} method from the Guarded blocks' slides. This method stores the tasks in a First In First Out (FIFO) queue; before a submitted task is executed, all the previously submitted tasks need to be executed. In some cases, we want to assign priorities to tasks so that a high-priority task can execute as soon as it is submitted to the task pool. Implement a \code{PriorityTaskPool} class that has the \code{asynchronous} method with the following signature:
+% \begin{lstlisting}
+% def asynchronous(priority: Int)(task: =>Unit): Unit
+% \end{lstlisting}
+% A single worker thread picks tasks submitted to the pool and executes them. Whenever the worker thread picks a new task from the pool for execution, that task must have the highest priority in the pool.
+% \note[Suggestion]{use the \texttt{scala.collection.mutable.PriorityQueue} data structure.}
+% \end{myExercise}
+
+% \begin{myExercise}Extend the \code{PriorityTaskPool} class from the previous exercise so that it supports any number of worker threads \code{p}. The parameter \code{p} is specified in the constructor of the \code{PriorityTaskPool} class.
+% \end{myExercise}
+
+% \begin{myExercise}Extend the \code{PriorityTaskPool} class from the previous exercise so that it supports the shutdown method:
+% \begin{lstlisting}
+% def shutdown(): Unit
+% \end{lstlisting}
+% When the \code{shutdown} method is called, all the tasks with the priorities greater than \code{important} must be completed, and the rest of the tasks must be discarded. The \code{important} integer parameter is specified in the constructor of the \code{PriorityTaskPool} class.
+% \end{myExercise}
+
+% \begin{myExercise}Implement a \code{ConcurrentBiMap} collection, which is a concurrent bidirectional map. The invariant is that every key is mapped to exactly one value, and vice versa. Operations must be atomic. The concurrent bidirectional map has the following interface:
+% \begin{lstlisting}
+% class ConcurrentBiMap[K, V] {
+%   def put(k: K, v: V): Option[(K, V)
+%   def removeKey(k: K): Option[V]
+%   def removeValue(v: V): Option[K]
+%   def getValue(k: K): Option[V]
+%   def getKey(v: V): Option[K]
+%   def size: Int
+%   def iterator: Iterator[(K, V)]
+% }
+% \end{lstlisting}
+% Make sure that your implementation prevents deadlocks from occurring in the map.
+% \end{myExercise}
+
+% \begin{myExercise}Add a \code{replace} method to the concurrent bidirectional map from the previous exercise. The method should atomically replace a key-value pair with another key-value pair:
+% \begin{lstlisting}
+% def replace(k1: K, v1: V, k2: K, v2: V): Unit
+% \end{lstlisting}
+% \end{myExercise}
+
+% \begin{myExercise}Test the implementation of the concurrent bidirectional map from the earlier exercise by creating a test in which several threads concurrently insert millions of key-value pairs into the map. When all of them complete, another batch of threads must concurrently invert the entries in the map -- for any key-value pair \code{(k1, k2)}, the thread should replace it with a key-value pair \code{(k2, k1)}.
+% \end{myExercise}
+
+% \begin{myExercise}Implement a \code{cache} method, which converts any function into a memoized version of itself. The first time that the resulting function is called for any argument, it is called in the same way as the original function. However, the result is memoized, and subsequently invoking the resulting function with the same arguments must return the previously returned value:
+% \begin{lstlisting}
+% def cache[K, V](f: K => V): K => V
+% \end{lstlisting}
+% Make sure that your implementation works correctly when the resulting function is called simultaneously from multiple threads.
+% \end{myExercise}
+
+
+\end{document}
