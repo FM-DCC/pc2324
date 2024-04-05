@@ -121,16 +121,201 @@ object ExecutorsCreate extends App {
 \end{frame}
 
 
+\begin{frame}[fragile]\frametitle{Scala's \texttt{ExecutionContext}}
+~\\[-6mm]
+\begin{columns}
+\begin{column}{0.74\textwidth}
+\begin{lstlisting}[emph={execute,sleep,log,global}]
+import scala.concurrent._
+object ExecutionContextGlobal extends App {
+  val ectx = ExecutionContext.global
+  ectx.execute(new Runnable {
+    def run() = log("Running on the execution context.")
+  })
+  Thread.sleep(500)
+}
+\end{lstlisting}
+\begin{lstlisting}[emph={execute,sleep,log,global,fromExecutorService}]
+object ExecutionContextCreate extends App {
+  val pool = new forkjoin.ForkJoinPool(2)
+  val ectx = ExecutionContext.fromExecutorService(pool)
+  ectx.execute(new Runnable {
+    def run() = log("Running on the execution context again.")
+  })
+  Thread.sleep(500)
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.36\textwidth}
+\begin{itemize}
+  \item \code{scala.concurrent}: has \code{ExecutionContext}
+  \item Similar to \code{Executor} but more Scala specific
+  \item often the \code{ExecutionContext} is used as implicit parameter
+  \item \code{global}: default execution context (internally uses a \code{ForkJoinPool})
+  \item \code{fromExecutorService}: creates \code{ExecutionContext} from \code{ExecutorService}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
 
 
-\begin{frame}\frametitle{Existing thread pools}
-... Executor vs Thread
+\begin{frame}[fragile]\frametitle{Simplifying the execution}
+~\\[-8mm]
+\begin{columns}[t]
+\begin{column}{0.45\textwidth}
+Similar to \structure{threads}:
+
+\begin{lstlisting}[emph={thread,run,start}]
+def thread(body: =>Unit): Thread = {
+  val t = new Thread {
+    override def run() = body
+  }
+  t.start()
+  t
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.56\textwidth}
+We now define \alert{\code{execute}}
+
+\begin{lstlisting}[emph={execute,sleep,log,global}]
+def execute(body: =>Unit) = ExecutionContext.global.execute(
+     new Runnable { def run() = body }
+)
+// For example:
+object ExecutionContextSleep extends App {
+  for (i<- 0 until 32) execute {
+    Thread.sleep(2000)
+    log(s"Task \§i completed.")
+  }
+  Thread.sleep(10000)
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Avoid blocking indefinitely}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.45\textwidth}
+\begin{lstlisting}[emph={execute,sleep,log,global}]
+object ExecutionContextSleep
+       extends App {
+  for (i<- 0 until 32) execute {
+    Thread.sleep(2000)
+    log(s"Task \§i completed.")
+  }
+  Thread.sleep(10000)
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.57\textwidth}
+\begin{itemize}
+  \item \structure{Expected:} all executions terminate after 2s
+  \item \alert{Result:} only some execute after 2s %threads block forever (?!)
+  \pause\\[4mm]
+  \item Using quad-core CPU with hyper threading
+  \item \code{global} has 8 threads in the thread pool
+  \pause\\[4mm]
+  \item executes tasks in batches of 8
+  \item after 2s, 8 tasks print "completed"
+  \item after 2s more, 8 more print "completed"
+  \item \structure{sleep}: all enter a \structure{timed waiting state}
+  \pause\\[4mm]
+  \item if T1 \structure{waits} for T10 to \structure{notify}: \alert{blocks indefinitely}
+\end{itemize}
+\end{column}
+\end{columns}
 \end{frame}
 
 
 
 \section{Lock-free programming}
 
+\begin{frame}[fragile]\frametitle{Avoiding \texttt{syncrhonized} with atomic variables}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.57\textwidth}
+\begin{itemize}
+  \item \alert{atomic variable}: memory location that supports \alert{complex linearizable operations}
+  \item ... i.e., \structure{appears to occur atomically}
+  \item \code{write} of a volatile operation:
+      \\ \structure{simple} linearizable operation
+  \item at least two reads and/or writes:
+      \\ \structure{complex} linearizable operation
+  \pause
+  \item \alert{java.util.concurrent.atomic} supports some complex ones:
+    \begin{itemize}
+       \item AtomicBoolean
+       \item AtomicInteger
+       \item AtomicLong
+       \item AtomicReference  
+    \end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+~\\
+\textbf{Variation of Example 1 (\code{getUniqueId})}
+\begin{lstlisting}[emph={execute,sleep,log,global,AtomicLong,incrementAndGet}]
+import java.util.concurrent.atomic._
+
+object AtomicUid extends App {
+  private val uid =
+    new AtomicLong(0L)
+
+  def getUniqueId(): Long =
+    uid.incrementAndGet()
+  execute {
+    log(s"Uid asynchronously: \§{getUniqueId()}")
+  }
+  log(s"Got a unique id: \§{getUniqueId()}")
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Compare-And-Set (CAS) -- the \alert{$\heartsuit$} of complex linearizable operations}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item CAS can be used to implement others:
+    \begin{itemize}
+      \item getAndSet
+      \item decrementAndGet
+      \item addAndGet
+    \end{itemize}
+  \item available in all atomic variables
+  \item including AtomicReference[T]
+\end{itemize}
+\end{column}
+\begin{column}{0.54\textwidth}
+~\\
+\textbf{Long-CAS conceptually equivalent to:}
+\begin{lstlisting}[emph={execute,sleep,log,Long,synchronized}]
+def compareAndSet(ov: Long, nv: Long):
+          Boolean = this.synchronized {
+    if (this.get == ov) false else {
+      this.set(nv)
+      true
+  } }
+\end{lstlisting}
+\textbf{Ref-CAS conceptually equivalent to:}
+\begin{lstlisting}[emph={execute,sleep,log,T,synchronized}]
+def compareAndSet(ov: T, nv: T):
+          Boolean = this.synchronized {
+  if (this.get eq ov) false else {
+    this.set(nv)
+    true
+} }
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
 
 \section{Lazy values}
 
