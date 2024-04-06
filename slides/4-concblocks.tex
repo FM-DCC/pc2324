@@ -18,6 +18,7 @@
 \usepackage[all]{xy}
 \usepackage{pgfplots}
 \usepackage{textcomp}
+\usepackage{cancel}
 
 \input{src/macros/macros}
 %-------------- template --------------------------------------------------
@@ -315,6 +316,96 @@ def compareAndSet(ov: T, nv: T):
 \end{lstlisting}
 \end{column}
 \end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Using CAS}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item Back to Example~1 (getUniqueId)
+  \item Need to keep-on-trying
+  \item Looks like busy-waiting, but it is much better
+  \item Here: using (cheap) recursion instead of a loop
+\end{itemize}
+\end{column}
+\begin{column}{0.54\textwidth}
+~\\
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,synchronized}]
+@tailrec def getUniqueId(): Long = {
+  val oldUid = uid.get
+  val newUid = oldUid + 1
+  if (uid.compareAndSet(oldUid, newUid)) newUid
+  else getUniqueId()
+}\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Lock-free programming -- really?}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item \alert{Lock-free programs}: without locks (with \code{synchronized})
+  \item Achieved using \alert{atomic variables} (and some re-trying)
+  \item No locks, no deadlocks...
+  \pause
+  \item (almost):
+    \begin{itemize}
+      \item lock-free $\Rightarrow$ use atomic variables (for atomicity)
+      \item use atomic variables $\cancel\Rightarrow$ lock-free
+    \end{itemize}
+  \pause
+\end{itemize}
+\end{column}
+\begin{column}{0.54\textwidth}
+~\\
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,mySynchronized,AtomicBoolean}]
+object AtomicLock extends App {
+  private val lock = new AtomicBoolean(false)
+  def mySynchronized(body: =>Unit): Unit = {
+    while (!lock.compareAndSet(false, true)) {}
+    try body finally lock.set(false)
+  }
+  var count = 0
+  for (i<- 0 until 10) execute { mySynchronized { count += 1 } }
+  Thread.sleep(1000)
+  log(s"Count is: \§count")
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}  
+
+
+\begin{frame}\frametitle{Lock-freedom definition}
+
+\begin{alertblock}{Lock-freedom}
+  Given a set of threads and an operation OP.
+  \\
+  \alert{OP is lock-free} if at least one thread always completes the operation after a finite number of steps, regardless of the speed at which different threads progress.
+\end{alertblock}
+\end{frame}
+
+
+\begin{frame}\frametitle{One more example: Concurrent filesystem}
+    \begin{itemize}
+      \item \textbf{Example 1:} getUniqueId()
+      \item \textbf{Example 2:} Logging Bank Transfers
+      \item \textbf{Example 3:} Thread pool
+      \item \textbf{Example 4:} Batman
+      \item \alert{\textbf{Example 5:} Concurrent filesystem}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}\frametitle{Concurrent filesystem}
+    
+  \fromBookW{79}{121mm}{67mm}
+
 \end{frame}
 
 \section{Lazy values}
