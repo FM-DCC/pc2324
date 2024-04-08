@@ -28,7 +28,7 @@ These exercises are taken mainly from the book ``\emph{Learning Concurrent Progr
 \\\bash{> mkdir cp2324}
 \\\bash{> cd cp2324}
 }
-\subex{Create a source code directory for our examples:
+\subex{Create a source code directory for our exercises:
 \\\bash{> mkdir -p src/main/scala/cp/lablessons/}}
 \subex{Create the configuration file \bash{build.sbt} below at the root of \bash{cp2324} (empty lines are mandatory).}
 \begin{lstlisting}
@@ -55,7 +55,11 @@ object HelloWorld extends App {
 \\\bash{sbt> run}
 \note{You can also \texttt{compile}, \texttt{$\sim$compile}, \texttt{console}, and many other.
 For example, you can compile and run java from the command line:
-\\\bash{java -cp ~/.sbt/boot/scala-2.12.12/lib/scala-library.jar:target/scala-2.12/classes/ cp.lablessons.lesson1.HelloWorld}}
+\\\bash{java -cp ~/.sbt/boot/scala-2.12.12/lib/scala-library.jar:target/scala-2.12/classes/ cp.lablessons.lesson1.HelloWorld}
+\\
+If multiple Apps exist, run a specific one with the command:
+\\\bash{sbt> runMain cp.lablessons.lesson1.HelloWorld}
+}
 }
 
 \subex{Extend the \bash{build.sbt} with dependencies that we may need during the semester.}
@@ -136,14 +140,14 @@ The partial function should not be defined if there are no matches within the ar
 \end{myExercise}
 
 
-\begin{myExercise}
-Consider that you and three of your colleagues working in an office divided into cubicles. You cannot see each other, and you are not allowed to verbally communicate, as that might disturb other workers. Instead, you can throw pieces of paper with short messages at each other. Since you are confined in a cubicle, neither of you can tell if the message has reached its destination. At any point, you or one of your colleagues may be called to the boss's office and kept there indefinitely. Design an algorithm in which you and your colleagues can decide when to meet at the local bar. With the exception of the one among you who was called to the boss's office, all of you have to decide on the same time. What if some of the paper pieces can arbitrarily miss the target cubicle?
-\end{myExercise}
+% \begin{myExercise}
+% Consider that you and three of your colleagues working in an office divided into cubicles. You cannot see each other, and you are not allowed to verbally communicate, as that might disturb other workers. Instead, you can throw pieces of paper with short messages at each other. Since you are confined in a cubicle, neither of you can tell if the message has reached its destination. At any point, you or one of your colleagues may be called to the boss's office and kept there indefinitely. Design an algorithm in which you and your colleagues can decide when to meet at the local bar. With the exception of the one among you who was called to the boss's office, all of you have to decide on the same time. What if some of the paper pieces can arbitrarily miss the target cubicle?
+% \end{myExercise}
 
-\begin{myExercise}
-Imagine that, in the previous exercise, you and your colleagues also have a whiteboard in the hall next to the office. Each one of you can occasionally pass through the hall and write something on the whiteboard, but there is no guarantee that either of you will be in the hall at the same time.
-Solve the problem from the previous exercise, this time using the whiteboard.
-\end{myExercise}
+% \begin{myExercise}
+% Imagine that, in the previous exercise, you and your colleagues also have a whiteboard in the hall next to the office. Each one of you can occasionally pass through the hall and write something on the whiteboard, but there is no guarantee that either of you will be in the hall at the same time.
+% Solve the problem from the previous exercise, this time using the whiteboard.
+% \end{myExercise}
 
 
 
