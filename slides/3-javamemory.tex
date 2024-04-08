@@ -550,7 +550,7 @@ def send(a1: Account, a2: Account, n: Int) {
 \end{lstlisting}
 \end{column}
 \begin{column}{0.40\textwidth}
-\begin{lstlisting}[emph={synchronized,sleep,log,thread,join}]
+\begin{lstlisting}[mathescape,emph={synchronized,sleep,log,thread,join}]
   // starting the worker as a daemon
   worker.setName("Worker")
   worker.setDaemon(true)
@@ -668,7 +668,7 @@ object SynchronizedPool extends App {
 \end{lstlisting}
 \end{column}
 \begin{column}{0.40\textwidth}
-\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify}]
+\begin{lstlisting}[mathescape,emph={sleep,log,thread,join,synchronized,wait,notify}]
   Worker.start()
 
   def asynchr(body: =>Unit) =

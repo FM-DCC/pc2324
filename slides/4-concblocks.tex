@@ -403,14 +403,179 @@ object AtomicLock extends App {
 
 
 \begin{frame}\frametitle{Concurrent filesystem}
+  \splittwo{0.35}{0.68}{
+    \begin{block}{Filesystem API}
+      \alert{T1} is creating \structure{F}:
+      \\\alert{T2} cannot copy or delete \structure{F}
+      \\[4mm]\alert{T1}\,\&\,\alert{T2} are copying \structure{F}:
+      \\\alert{T3} cannot delete \structure{F}
+      \\[4mm]\alert{T1} is deleting \structure{F}:
+      \\\alert{T2} cannot copy nor delete \structure{F}
+    \end{block}
+  }{
+    \fromBook[scale=0.8]{79}{40mm}{121mm}{40mm}{67mm}
+  }
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Concurrent filesystem -- Scala data types}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.35\textwidth}
+    \begin{block}{Filesystem API}
+      \alert{T1} is creating \structure{F}:
+      \\\alert{T2} cannot copy or delete \structure{F}
+      \\[4mm]\alert{T1}\,\&\,\alert{T2} are copying \structure{F}:
+      \\\alert{T3} cannot delete \structure{F}
+      \\[4mm]\alert{T1} is deleting \structure{F}:
+      \\\alert{T2} cannot copy nor delete \structure{F}
+    \end{block}
+\end{column}
+\begin{column}{0.68\textwidth}
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,State,AtomicReference}]
+class Entry(val isDir: Boolean) {
+  val state = new AtomicReference[State](new Idle)
+}
+
+sealed trait State
+class Idle extends State
+class Creating extends State
+class Copying(val n: Int) extends State
+class Deleting extends State
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Deleting and Copying}
+\alert{Deleting:} \textbf{\structure{\underline{prepare}}} (checks for permission) then \structure{delete} (perform delete)
+
+\alert{Copying:} \structure{aquire} (get permission); \structure{copy} (perform action); then \structure{release} (give permission)
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Prepare for deleting}
+
+\begin{lstlisting}[emph={execute,sleep,log,logMessage,compareAndSet,State,AtomicReference}]
+@tailrec
+private def prepareForDelete(entry: Entry): Boolean = {
+  val  s0 = entry.state.get
+  s0 match {
+    case i: Idle =>
+      if (entry.state.compareAndSet(s0, new Deleting)) true
+      else prepareForDelete(entry)
+    case c: Creating =>
+      logMessage("File currently created, cannot delete."); false
+    case c: Copying =>
+      logMessage("File currently copied, cannot delete."); false
+    case d: Deleting =>
+      false
+  }
+}
+\end{lstlisting}
+
+\code{logMessage}: presented later -- similar to \code{log}, but stores the log message
+\end{frame}
+
+
+\begin{frame}\frametitle{Bad copy -- the ABA problem}
+\alert{``A\structure{B}A'' problem}: two readings of the same value \alert{A} lead to believe that \structure{B} was never present (type of race condition)
+
+\bigskip
+
+Illustrated by a bad acquire-release for \code{Copying}, using a mutable \code{n} in:
+\\~~\alert{\texttt{Copying(\structure{var} n: Int)}}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Bad code -- acquire/release Copying}
     
-  \fromBookW{79}{121mm}{67mm}
+\begin{lstlisting}[emph={execute,sleep,log,logMessage,compareAndSet,releaseCopy}]
+def releaseCopy(e: Entry): Copying = e.state.get match {
+  case c: Copying =>
+    val nstate = if (c.n == 1) new Idle else new Copying(c.n - 1)
+    if (e.state.compareAndSet(c, nstate)) c
+    else releaseCopy(e)
+}
+\end{lstlisting}
+\begin{lstlisting}[emph={execute,sleep,log,logMessage,compareAndSet,acquireCopy}]
+def acquireCopy(e: Entry, c: Copying) = e.state.get match {
+  case i: Idle =>
+    c.n = 1
+    if (!e.state.compareAndSet(i, c)) acquireCopy(e, c)
+  case oc: Copying =>
+    c.n = oc.n + 1
+    if (!e.state.compareAndSet(oc, c)) acquireCopy(e, c)
+}
+\end{lstlisting}
+Optimization: reusing previous \code{Copying} if possible
+\end{frame}
+
+
+\begin{frame}\frametitle{Bad trace -- T1\&T2 release; T3\&T1 aquire -- (T2 is slow)}
+    \fromBookW{82}{151mm}{33mm}
+\end{frame}
+
+
+\begin{frame}\frametitle{Some guidelines to avoid the ABA problem}
+  \begin{itemize}
+    \item use fresh objects in \code{AtomicReference}
+    \item use immutable objects in \code{AtomicReference}
+    \item avoid re-assigning the same value to an atomic variable
+    \item only increment or decrement values of numeric atomic variables (if possible)
+  \end{itemize}
+
 
 \end{frame}
 
+
 \section{Lazy values}
 
+\begin{frame}[fragile]\frametitle{Lazy values can cause deadlocks}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item \alert{\textbf{lazy values:}} initialized when read for the first time
+  \item these should not depend-on/modify state (non-determinism)
+  \item code in \structure{singleton objects}: lazy execution
+  \item under the hood: first write uses a lock -- to ensure at most a thread initialises a lazy value
+  \item \structure{stack overflow} (sequential code)\\~~can become\\
+        \alert{deadlock} (concurrent code)
+
+\end{itemize}
+\end{column}
+\begin{column}{0.54\textwidth}
+~\\
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,mySynchronized,AtomicBoolean}]
+object LazyValsCreate extends App {
+  var x = 5
+  lazy val y = x+2
+  execute {log(s"Wrk: y = $y")}
+  x = 10
+  log(s"Main: y = $y")
+  // y = 7 or 12 in both cases
+  Thread.sleep(500)
+}
+\end{lstlisting}
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,mySynchronized,AtomicBoolean}]
+object LazyValsDeadlock extends App {
+  object A { lazy val x: Int = B.y }
+  object B { lazy val y: Int = A.x }
+  execute { B.y }
+  A.x
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+
+
+
+\end{frame}
 
 \section{Concurrent collections}
+
+
 
 \end{document}
