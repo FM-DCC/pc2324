@@ -569,13 +569,71 @@ object LazyValsDeadlock extends App {
 \end{lstlisting}
 \end{column}
 \end{columns}
-
-
-
 \end{frame}
 
 \section{Concurrent (mutable) collections}
 
 
+\begin{frame}[fragile]\frametitle{Default mutable collections are not concurrent}
 
+
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item Naive code: arbitrarily returns different results and exceptions
+  \item Corruption of the internal state
+  \item Possible fixes:
+    \begin{itemize}
+      \item immutable collections + atomic variables
+      \\\only<2>{\structure{(does not scale)}}
+      \item mutable collections + synchronized
+      \\\only<2>{\structure{(assuming collections do not block; may not scale)}}
+      \item dedicated libraries
+      \\\only<2>{\structure{(far better performance and scalability)}}
+    \end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{0.54\textwidth}
+~\\
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,asyncAdd}]
+import scala.collection._
+object CollectionsBad extends App {
+  val buffer = mutable.ArrayBuffer[Int]()
+  def asyncAdd(numbers: Seq[Int]) = execute {
+    buffer ++= numbers
+    log(s"buffer = $buffer")
+  }
+  asyncAdd(0 until 10)
+  asyncAdd(10 until 20)
+  Thread.sleep(500)
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[t]\frametitle{Some concurrent collections}
+    
+  \begin{itemize}
+    \item Concurrent queues 
+      \begin{itemize}
+         \item java.util.concurrent.BlockingQueue interface
+        \item ...ArrayBlockingQueue class (bounded)
+        \item ...LinkedBlockingQueue class (unbounded)
+       \end{itemize} 
+    \item Concurrent Sets and Maps
+      \begin{itemize}
+        \item scala.collection.concurrent.Map trait
+        \item java.util.concurrent.ConcurrentHashMap class
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{BlockingQueue API}
+    \centering
+    \fromBook[scale=1.2]{90}{20mm}{24mm}{59mm}{172mm}
+
+\end{frame}
 \end{document}
