@@ -41,8 +41,8 @@
     \item What is Scala?
     \alert{\item Concurrency in Java and its memory model}
     \item Basic concurrency blocks and libraries
-    \item Futures and promises
-    \item Actor model (maybe)
+    \item \textcolor{gray}{Futures and promises}
+    \item Actor model
   \end{itemize}
   \end{block}
 \end{frame}
@@ -202,11 +202,13 @@ object ThreadsSleep extends App {
 \begin{column}{0.49\textwidth}
 \begin{lstlisting}[emph={sleep,log,thread,join}]
 object ThreadsNondeterminism extends App {
- val t = thread { log("New thread running.") }
-     log("...")
-     log("...")
-     t.join()
-     log("New thread joined.")
+  val t = thread {
+    log("New thread running.")
+  }
+  log("...")
+  log("...")
+  t.join()
+  log("New thread joined.")
 }
 \end{lstlisting}
 \end{column}
@@ -256,11 +258,13 @@ t.join()
 \begin{column}{0.49\textwidth}
 \begin{lstlisting}[emph={sleep,log,thread,join}]
 object ThreadsNondeterminism extends App {
- val t = thread { log("New thread running.") }
-     log("...")
-     log("...")
-     t.join()
-     log("New thread joined.")
+  val t = thread {
+    log("New thread running.")
+  }
+  log("...")
+  log("...")
+  t.join()
+  log("New thread joined.")
 }
 \end{lstlisting}
 \end{column}
@@ -577,7 +581,7 @@ $~$
 
 \begin{frame}\frametitle{Note on daemon threads}
 % \splittwo{
-  \begin{alertblock}{Normal}
+  \begin{alertblock}{Daemon thread}
     \begin{itemize}
       \item not the default
       \item have lower priority
