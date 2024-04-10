@@ -52,11 +52,11 @@ The \code{Iterator} object returned by the iterator method must correctly traver
 \end{myExercise}
 
 \begin{myExercise}
-If required, modify the \code{ConcurrentSortedList} class from the previous example so that calling the add method has the running time linear to the length of the list and creates a constant number of new objects when there are no retries due to concurrent add invocations.
+If required, modify the \code{ConcurrentSortedList} class from the previous example so that calling the \code{add} method has the running time linear to the length of the list and creates a constant number of new objects when there are no retries due to concurrent \code{add} invocations.
 \end{myExercise}
   
 \begin{myExercise}
-Implement a LazyCell class with the following interface:
+Implement a \code{LazyCell} class with the following interface:
 \begin{lstlisting}
 class LazyCell[T](initialization: =>T) {
   def apply(): T = ???
