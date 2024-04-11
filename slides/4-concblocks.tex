@@ -619,14 +619,14 @@ object CollectionsBad extends App {
   \begin{itemize}
     \item Concurrent queues 
       \begin{itemize}
-         \item java.util.concurrent.BlockingQueue interface
-        \item ...ArrayBlockingQueue class (bounded)
-        \item ...LinkedBlockingQueue class (unbounded)
+         \item java.util.concurrent.BlockingQueue \structure{interface}
+        \item ...ArrayBlockingQueue \alert{class} (bounded)
+        \item ...LinkedBlockingQueue \alert{class} (unbounded)
        \end{itemize} 
     \item Concurrent Sets and Maps
       \begin{itemize}
-        \item scala.collection.concurrent.Map trait
-        \item java.util.concurrent.ConcurrentHashMap class
+        \item scala.collection.concurrent.Map \structure{trait}
+        \item java.util.concurrent.ConcurrentHashMap \alert{class}
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -634,6 +634,92 @@ object CollectionsBad extends App {
 \begin{frame}[t]\frametitle{BlockingQueue API}
     \centering
     \fromBook[scale=1.2]{90}{20mm}{24mm}{59mm}{172mm}
-
 \end{frame}
+
+\begin{frame}[fragile]\frametitle{Back to Example 5: logging in our concurrent filesystem}
+    
+We will compile a queue of messages when \alert{logging} messages in our file system
+
+
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,logger,messages,logMessage}]
+class FileSystem(...) {
+  ...
+  private val messages = new LinkedBlockingQueue[String]
+  val logger = new Thread {
+    setDaemon(true)
+    override def run() = while (true) log(messages.take())
+  }
+  logger.start()
+  def logMessage(msg: String): Unit = messages.offer(msg)
+}
+\end{lstlisting}
+
+\begin{lstlisting}[emph={execute,sleep,log,compareAndSet,logMessage}]
+...
+val fileSystem = new FileSystem(".") // to be defined later
+fileSystem.logMessage("Testing log!")
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}\frametitle{Note on iterators}
+
+\begin{itemize}
+  \item concurrentQueue.iterator
+  \item can produce inconsistent results
+  \item while traversing and modifying, the iterator can be updated
+  \item (heavier) exceptions create a copy when producing an iterator
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Example 5: files as a Map in our FileSystem}
+
+\begin{lstlisting}[emph={execute,sleep,log,ConcurrentHashMap,files,Entry}]
+import scala.collection.convert.decorateAsScala._
+import java.io.File
+import org.apache.commons.io.FileUtils // needs "commons-io" in build.sbt
+
+class FileSystem(val root: String) {
+  val rootDir = new File(root)
+  val files: concurrent.Map[String, Entry] =
+    new ConcurrentHashMap().asScala
+  for (f <- FileUtils.iterateFiles(rootDir, null, false).asScala)
+    files.put(f.getName, new Entry(false))
+
+  ...
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Deleting a file}
+
+Recall the \code{prepareForDelete(entry)}
+
+\begin{lstlisting}[emph={execute,sleep,log,deleteFile,files,prepareForDelete}]
+...
+def deleteFile(filename: String): Unit = {
+  files.get(filename) match {
+    case None =>
+      logMessage(s"Path '$filename' does not exist!")
+    case Some(entry) if entry.isDir =>
+      logMessage(s"Path '$filename' is a directory!")
+    case Some(entry) => execute {
+      if (prepareForDelete(entry))
+        if (FileUtils.deleteQuietly(new File(filename)))
+          files.remove(filename)
+    }
+  }
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}\frametitle{Some atomic methods of concurrent Map}
+    \centering
+    \fromBookW[scale=0.8]{95}{34mm}{142mm}
+    (Using "equals" instead of the reference, as with CAS)
+\end{frame}
+
 \end{document}

@@ -467,10 +467,10 @@ object SynchronizedDeadlock extends App {
     }
   }
 
-  val a = new Account("Jack", 1000)
-  val b = new Account("Jill", 2000)
-  val t1 = thread { for (i<- 0 until 100) send(a, b, 1) }
-  val t2 = thread { for (i<- 0 until 100) send(b, a, 1) }
+  val l = new Account("Lucy", 1000)
+  val j = new Account("Jim", 2000)
+  val t1 = thread { for (i<- 0 until 100) send(l, j, 1) }
+  val t2 = thread { for (i<- 0 until 100) send(j, l, 1) }
   t1.join(); t2.join()
   log(s"a = ${a.money}, b = ${b.money}")
 \end{lstlisting}
@@ -540,7 +540,7 @@ def send(a1: Account, a2: Account, n: Int) {
   // our single working thread
   val worker = new Thread {
     def poll(): Option[()=>Unit] = 
-      asks.synchronized {
+      tasks.synchronized {
        if (tasks.nonEmpty) Some(tasks.dequeue())
        else                None
       }
