@@ -13,8 +13,8 @@ The goal of this course is to introduce students to the fundamental theoretic an
 
 # Lectures
 
-- __4 Apr 24__: [T] Introduction to the second module. Overview of Scala ([1-intro.pdf](slides/1-intro.pdf)).
-- __11 Apr 24__: [P] Exercises on Scala ([ex-scala.pdf](exercises/ex-scala.pdf)). [T] Introduction to the Java Memory Model ([2-javamemory.pdf](slides/2-javamemory.pdf)).
+- __4 Apr 24__: [T] Introduction to the second module ([1-intro.pdf](slides/1-intro.pdf)). Overview of Scala ([2-scala.pdf](slides/2-scala.pdf)).
+- __11 Apr 24__: [P] Exercises on Scala ([ex-scala.pdf](exercises/ex-scala.pdf)). [T] Introduction to the Java Memory Model ([3-javamemory.pdf](slides/3-javamemory.pdf)).
 - __18 Apr 24__: [P] Exercises on the Java Memory Model ([ex-javamemory.pdf](exercises/ex-javamemory.pdf)). [T] tbd.
 
 
@@ -24,11 +24,12 @@ The goal of this course is to introduce students to the fundamental theoretic an
 1. [Introduction to the second module](slides/1-intro.pdf)
 2. [Scala primer](slides/2-scala.pdf)
 3. [Java Memory Model](slides/3-javamemory.pdf)
+4. ...
 
 ### Exercises
 1. [Exercises on Scala](exercises/ex-scala.pdf)
 2. [Exercises on Java Memory](exercises/ex-javamemory.pdf)
-
+3. ...
 
 ### Main book
 
