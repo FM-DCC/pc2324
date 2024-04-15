@@ -490,6 +490,7 @@ Illustrated by a bad acquire-release for \code{Copying}, using a mutable \code{n
 
 
 \begin{frame}[fragile]\frametitle{Bad code -- acquire/release Copying}
+\label{slide:badcopy}
     
 \begin{lstlisting}[emph={execute,sleep,log,logMessage,compareAndSet,releaseCopy}]
 def releaseCopy(e: Entry): Copying = e.state.get match {
@@ -716,10 +717,135 @@ def deleteFile(filename: String): Unit = {
 \end{frame}
 
 
-\begin{frame}\frametitle{Some atomic methods of concurrent Map}
+\begin{frame}\frametitle{Some complex linearizable methods of concurrent Map}
     \centering
     \fromBookW[scale=0.8]{95}{34mm}{142mm}
-    (Using "equals" instead of the reference, as with CAS)
+
+    \splittwo{0.48}{0.48}{
+      \begin{itemize}
+        \item These use ``equals'' instead of the reference (which CAS does)
+        \item Avoid \code{null} as key or valye (often used as special values)
+      \end{itemize}
+    }{
+      \begin{itemize}
+        \item Methods \code{+=}, \code{-=}, \code{put}, \code{update}, \code{get}, \code{apply}, \code{remove} are (non-complex) linearizable
+      \end{itemize}
+    }
+    % (Using "equals" instead of the reference, as with CAS)
+\end{frame}
+
+
+\section*{Wrapping up our Filesystem (Example 5)}
+
+\begin{frame}[fragile]\frametitle{Copying in our Filesystem}
+    Recall our \alert{broken} \structure{aquireCopy}/\structure{releaseCopy} methods (\alert{ABA problem}) -- slide\ref{slide:badcopy}
+
+\begin{lstlisting}[emph={execute,sleep,log,Copying,aquire,compareAndSet}]
+@tailrec
+private def acquire(entry: Entry): Boolean = {
+  val s0 = entry.state.get
+  s0 match {
+    case _: Creating | _: Deleting =>
+      logMessage("File inaccessible, cannot copy."); false
+    case i: Idle =>
+      if (entry.state.compareAndSet(s0, new Copying(1))) true
+      else acquire(entry)
+    case c: Copying =>
+      if (entry.state.compareAndSet(s0, new Copying(c.n+1))) true
+      else acquire(entry)
+  }
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Copying in our Filesystem}
+    Same CAS retry-approach for releasing.
+
+\begin{lstlisting}[emph={execute,sleep,log,Copying,release,compareAndSet}]
+@tailrec
+private def release(entry: Entry): Unit = {
+  val s0 = entry.state.get
+  s0 match {
+    case c: Creating =>
+      if (!entry.state.compareAndSet(s0, new Idle)) release(entry)
+    case c: Copying =>
+      val nstate = if (c.n == 1) new Idle else new Copying(c.n-1)
+      if (!entry.state.compareAndSet(s0, nstate)) release(entry)
+  }
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Copying in our Filesystem}
+    Finally: wrapper for copying a file.
+
+\begin{lstlisting}[emph={execute,sleep,log,Copying,copyFile,acquire, release}]
+def copyFile(src: String, dest: String): Unit = {
+  files.get(src) match {
+    case Some(srcEntry) if !srcEntry.isDir => execute {
+      if (acquire(srcEntry)) try {
+        val destEntry = new Entry(isDir = false)
+        destEntry.state.set(new Creating)
+        if (files.putIfAbsent(dest, destEntry) == None) try {
+          FileUtils.copyFile(new File(src), new File(dest))
+        } finally release(destEntry)
+      } finally release(srcEntry)
+    }
+} }
+\end{lstlisting}
+\end{frame}
+
+
+
+\section{Creating and handling processes}
+
+\begin{frame}\frametitle{Beyond JVM}
+
+\begin{itemize}
+  \item \structure{So far:} run in a single JVM
+  \item \structure{Now:} run processes outside JVM
+  \item \structure{Why:}
+  \pause
+    \begin{itemize}
+      \item Some programs do not exist in Scala/Java
+      \item \pause Want to sandbox untrusted code
+      \item \pause Performance (running independent code)
+    \end{itemize}
+  \pause
+  \item Using the \alert{\code{scala.sys.process}} package
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Using processes - examples}
+    
+\begin{lstlisting}[emph={execute,sleep,log,destroy,!}]
+import scala.sys.process._
+object ProcessRun extends App {
+  val command = "ls"
+  val exitcode = command.! // run process (with side effects)
+  log(s"command exited with status $exitcode")
+}
+\end{lstlisting}
+
+\begin{lstlisting}[emph={execute,sleep,log,destroy,!}]
+def lineCount(filename: String): Int = {
+  val output = s"wc $filename".!! // run and retreive stdout
+  output.trim.split(" ").head.toInt
+}
+\end{lstlisting}
+
+\begin{lstlisting}[emph={execute,sleep,log,destroy}]
+object ProcessAsync extends App {
+  val lsProcess = "ls -R /".run() // run and keep process info
+  Thread.sleep(1000)
+  log("Timeout - killing ls!")
+  lsProcess.destroy() // kill a slow process
+}
+\end{lstlisting}
+
+
 \end{frame}
 
 \end{document}
