@@ -42,8 +42,8 @@
     \item What is Scala?
     \item Concurrency in Java and its memory model
     \alert{\item Basic concurrency blocks and libraries}
-    \item Futures and promises
-    \item Actor model (maybe)
+    % \item Futures and promises
+    \item Actor model
   \end{itemize}
   \end{block}
 \end{frame}
@@ -72,7 +72,7 @@
 
   \begin{itemize}
     \item Tread pools: Executor and ExecutionContext
-    \item Non-blocking synchronisation -- compare-and-swap (CAS)
+    \item Non-blocking synchronisation -- compare-and-set (CAS)
     \item Lazy (concurrent) values
     \item Concurrent collections
     \item Running OS processes
@@ -109,9 +109,9 @@ object ExecutorsCreate extends App {
 \end{column}
 \begin{column}{0.49\textwidth}
 \begin{itemize}
-  \item Executor: can start a new thread, an existing one, or the current one
+  \item \alert{Executor:} can start a new thread, an existing one, or the current one
   \item Abstracts from the management of threads
-  \item ExecutorService: API that extends Executor with \code{shutdown}
+  \item \structure{ExecutorService:} API that extends Executor with \code{shutdown}
     \begin{itemize}
       \item \code{executor.shutdown} $\to$ executes all tasks and then stops working threads
       \item \code{executor.awaitTermination(...)} $\to$ force termination if, after a given time, the tasks are not completed
@@ -149,11 +149,11 @@ object ExecutionContextCreate extends App {
 \end{column}
 \begin{column}{0.36\textwidth}
 \begin{itemize}
-  \item \code{scala.concurrent}: has \code{ExecutionContext}
-  \item Similar to \code{Executor} but more Scala specific
-  \item often the \code{ExecutionContext} is used as implicit parameter
-  \item \code{global}: default execution context (internally uses a \code{ForkJoinPool})
-  \item \code{fromExecutorService}: creates \code{ExecutionContext} from \code{ExecutorService}
+  \item \code{scala.concurrent}: has \alert{ExecutionContext}
+  \item Similar to \structure{Executor} but more Scala specific
+  \item often used as implicit parameter
+  \item \alert{\code{global}}: default execution context (internally uses a \code{ForkJoinPool})
+  \item \code{fromExecutorService}: creates \structure{ExecutionContext} from \structure{ExecutorService}
 \end{itemize}
 \end{column}
 \end{columns}

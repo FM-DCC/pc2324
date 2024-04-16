@@ -47,7 +47,7 @@ class ConcurrentSortedList[T](implicit val ord: Ordering[T]) {
   def iterator: Iterator[T] = ???
 }
 \end{lstlisting}
-Under the hood, the \code{ConcurrentSortedList} class should use a linked list of atomic references. Ensure that your implementation is lock-free and avoids ABA problems.
+Under the hood, the \code{ConcurrentSortedList} class should use a (manually created) linked list of atomic references by inserting elements in the right position. Ensure that your implementation is lock-free and avoids ABA problems.
 The \code{Iterator} object returned by the iterator method must correctly traverse the elements of the list in ascending order under the assumption that there are no concurrent invocations of the add method.
 \end{myExercise}
 
@@ -65,11 +65,12 @@ class LazyCell[T](initialization: =>T) {
 Creating a \code{LazyCell} object and calling the apply method must have the
 same semantics as declaring a lazy value and reading it, respectively.
 You are not allowed to use lazy values in your implementation.
+Avoid calling \code{synchronized} in a normal execution (i.e., without data races).
 \end{myExercise}
 
 \begin{myExercise}
 Implement a \code{PureLazyCell} class with the same interface and semantics as the \code{LazyCell} class from the previous exercise. The \code{PureLazyCell} class assumes that the initialization parameter does not cause side effects, so it can be evaluated more than once.
-The apply method must be lock-free and should call the initialization as little as possible.
+The apply method must be \textbf{lock-free} and should call the initialization as little as possible.
 \end{myExercise}
 
 \begin{myExercise}
@@ -85,9 +86,9 @@ Implement a \code{SyncConcurrentMap} class that extends the \code{Map} API that 
 % Use Java serialization to transfer the block of code, its return value, and the potential exceptions between the parent and the child JVM processes.
 % \end{myExercise}
 
-\begin{myExercise}
-Augment the lock-free pool implementation from the theoretical lessons with a \code{foreach} operation, used to traverse all the elements in the pool. Then make another version of \code{foreach} that is both lock-free and linearizable.
-\end{myExercise}
+% \begin{myExercise} % NOT IN THE SLIDES!
+% Augment the lock-free pool implementation from the theoretical lessons with a \code{foreach} operation, used to traverse all the elements in the pool. Then make another version of \code{foreach} that is both lock-free and linearizable.
+% \end{myExercise}
 
 % \begin{myExercise}
 % Prove that the lock-free pool implementation from this chapter is correct.

@@ -125,12 +125,12 @@ def replace(k1: K, v1: V, k2: K, v2: V): Unit
 \begin{myExercise}Test the implementation of the concurrent bidirectional map from the earlier exercise by creating a test in which several threads concurrently insert millions of key-value pairs into the map. When all of them complete, another batch of threads must concurrently invert the entries in the map -- for any key-value pair \code{(k1, k2)}, the thread should replace it with a key-value pair \code{(k2, k1)}.
 \end{myExercise}
 
-\begin{myExercise}Implement a \code{cache} method, which converts any function into a memoized version of itself. The first time that the resulting function is called for any argument, it is called in the same way as the original function. However, the result is memoized, and subsequently invoking the resulting function with the same arguments must return the previously returned value:
-\begin{lstlisting}
-def cache[K, V](f: K => V): K => V
-\end{lstlisting}
-Make sure that your implementation works correctly when the resulting function is called simultaneously from multiple threads.
-\end{myExercise}
+% \begin{myExercise}Implement a \code{cache} method, which converts any function into a memoized version of itself. The first time that the resulting function is called for any argument, it is called in the same way as the original function. However, the result is memoized, and subsequently invoking the resulting function with the same arguments must return the previously returned value:
+% \begin{lstlisting}
+% def cache[K, V](f: K => V): K => V
+% \end{lstlisting}
+% Make sure that your implementation works correctly when the resulting function is called simultaneously from multiple threads.
+% \end{myExercise}
 
 
 \end{document}
