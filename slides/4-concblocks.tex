@@ -676,7 +676,7 @@ fileSystem.logMessage("Testing log!")
 
 \begin{frame}[fragile]\frametitle{Example 5: files as a Map in our FileSystem}
 
-\begin{lstlisting}[emph={execute,sleep,log,ConcurrentHashMap,files,Entry}]
+\begin{lstlisting}[emph={execute,sleep,log,ConcurrentHashMap,files,Entry,iterateFiles}]
 import scala.collection.convert.decorateAsScala._
 import java.io.File
 import org.apache.commons.io.FileUtils // needs "commons-io" in build.sbt
@@ -698,7 +698,7 @@ class FileSystem(val root: String) {
 
 Recall the \code{prepareForDelete(entry)}
 
-\begin{lstlisting}[emph={execute,sleep,log,deleteFile,files,prepareForDelete}]
+\begin{lstlisting}[emph={execute,sleep,log,deleteFile,files,prepareForDelete,deleteQuietly}]
 ...
 def deleteFile(filename: String): Unit = {
   files.get(filename) match {
@@ -825,27 +825,58 @@ import scala.sys.process._
 object ProcessRun extends App {
   val command = "ls"
   val exitcode = command.! // run process (with side effects)
-  log(s"command exited with status $exitcode")
-}
+  log(s"command exited with status $exitcode") }
 \end{lstlisting}
 
 \begin{lstlisting}[emph={execute,sleep,log,destroy,!}]
 def lineCount(filename: String): Int = {
   val output = s"wc $filename".!! // run and retreive stdout
-  output.trim.split(" ").head.toInt
-}
+  output.trim.split(" ").head.toInt }
 \end{lstlisting}
 
 \begin{lstlisting}[emph={execute,sleep,log,destroy}]
 object ProcessAsync extends App {
-  val lsProcess = "ls -R /".run() // run and keep process info
+  val lsProcess = "ls -R /".run() // run and returns a Process object
   Thread.sleep(1000)
   log("Timeout - killing ls!")
-  lsProcess.destroy() // kill a slow process
-}
+  lsProcess.destroy() } // kill a slow process
 \end{lstlisting}
 
+{\small\url{https://www.scala-lang.org/api/2.13.x/scala/sys/process/ProcessBuilder.html}}
 
 \end{frame}
+
+
+\begin{frame}\frametitle{Wrapping up ``concurrency blocks''} %{Summary of concurrency blocks covered}
+  \splittwo{0.56}{0.44}{
+    \begin{itemize}
+      \item \texttt{\color{blue!75!black}executor.execute(...)}
+      \item lock-free programming with atomic variables
+      \item \texttt{\color{blue!75!black}av.compareAndSet(...)}
+      \item ABA problem
+      \item Lazy values \& ``lazy'' objects
+      \item \texttt{\color{blue!75!black}java.util.concurrent.BlockingQueue}
+      \item \texttt{\color{blue!75!black}scala.collection.concurrent.Map}
+      \item \textcolor{gray}{\emph{weakly consistent iterators}}
+      \item \textcolor{gray}{\emph{custom concurrent data structures}}
+    \end{itemize}
+  }{
+    \begin{itemize}
+      \item Filesystem example
+      \item Processes outside JVM
+    \end{itemize}
+    \pause
+    \begin{alertblock}{Next}
+      \begin{itemize}
+        \item \textcolor{gray}{\emph{Futures and Promises}}
+        \item \textcolor{gray}{\emph{Data-Parallel Collections}}
+        \item \textcolor{gray}{\emph{Reactive Programming (Concurrently)}}
+        \item \textcolor{gray}{\emph{Software Transactional Memory}}
+        \item \alert{Actors}
+      \end{itemize}
+    \end{alertblock}
+  }
+\end{frame}
+
 
 \end{document}
