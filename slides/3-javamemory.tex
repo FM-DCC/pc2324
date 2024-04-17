@@ -629,7 +629,7 @@ $~$
 \end{frame}
 
 \begin{frame}[fragile]\frametitle{Wait-notify example}
-\begin{lstlisting}[emph={sleep,log,thread,join,wait,notify}]
+\begin{lstlisting}[emph={sleep,log,thread,join,wait,notify,synchronized}]
 object SynchronizedGuardedBlocks extends App {
   val lock = new AnyRef
   var message: Option[String] = None
@@ -714,7 +714,7 @@ $~$
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{Interrupting threads -- alternative with graceful shutdown}
+\begin{frame}[fragile]\frametitle{Interrupting threads -- alternative with \alert{graceful shutdown}}
     
 \begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify,shutdown,terminated}]
 object Worker extends Thread {
@@ -745,7 +745,7 @@ object Worker extends Thread {
 \begin{itemize}
   \item using the \texttt{\alert{@volatile}} annotation
   \\~
-  \item can be atomically read and modified
+  \item can be [atomically read] and [atomically modified]
   \item mostly used as status flag
   \item are never reordered in a thread
   \item writes are immediately visible to other threads
@@ -756,7 +756,7 @@ object Worker extends Thread {
 \end{frame}
 
 \begin{frame}[fragile]\frametitle{Example 4 -- Batman}
-\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify,volatile}]
+\begin{lstlisting}[emph={sleep,log,thread,join,synchronized,wait,notify,volatile,found}]
 object Volatile extends App {
   class Page(val txt: String, var position: Int)
 
@@ -783,7 +783,7 @@ object Volatile extends App {
 \begin{frame}\frametitle{Happens-before relation}
 \centering
 
-\structure{action $\alpha$} \alert{happens-before} \structure{action $\beta$}\\
+\structure{action $\alpha$} \alert{happens-before (HB)} \structure{action $\beta$}\\
 means  \structure{action $\beta$} sees the memory writes of \structure{action $\alpha$}
 
 \begin{itemize}
@@ -796,7 +796,7 @@ means  \structure{action $\beta$} sees the memory writes of \structure{action $\
 \end{itemize}
 
 \pause
-\structure{Data race:} when a write to memory does not \alert{happen-before} its intended read.
+\structure{Data race:} when a write to memory does not \alert{happen-before} its \emph{intended} read.
 \end{frame}
 
 \begin{frame}[fragile]\frametitle{Immutable objects and final fields}
