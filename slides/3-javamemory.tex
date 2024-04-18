@@ -792,7 +792,7 @@ means  \structure{action $\beta$} sees the memory writes of \structure{action $\
 \item \textbf{Volatile fields:} writing to a volatile field \alert{HB} every of its subsequent read
 \item \textbf{Thread start:} calling \texttt{thrd.start()} \alert{HB} any actions of \texttt{thrd}
 \item \textbf{Thread termination:} $\alpha$ in a thread \alert{HB} a \texttt{join()} on that thread.
-\item \textbf{Transitivity:} if $\alpha$ \alert{HB} $\beta$ and $\beta$ \alert{HB} $\gamma$, then a$\alpha$ \alert{HB} $\gamma$
+\item \textbf{Transitivity:} if $\alpha$ \alert{HB} $\beta$ and $\beta$ \alert{HB} $\gamma$, then $\alpha$ \alert{HB} $\gamma$
 \end{itemize}
 
 \pause
