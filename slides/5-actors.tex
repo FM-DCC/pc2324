@@ -1,0 +1,107 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{etex} % fixes new-dimension error
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx,amsmath}
+\usepackage{stmaryrd} % cf. interleave
+\usepackage{booktabs}
+\usepackage{amscd}
+\usepackage{multicol}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{alltt}
+\usepackage{proof}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage[new]{old-arrows}
+\usepackage[all]{xy}
+\usepackage{pgfplots}
+\usepackage{textcomp}
+\usepackage{cancel}
+
+\input{src/macros/macros}
+%-------------- template --------------------------------------------------
+\input{src/macros/beamerconf}
+%----------------------------------------------------------------------------
+
+\begin{document}
+
+\setLecture{5}{Actor model using the Akka framework}
+
+
+\section{Overview}
+
+\begin{frame}{We are here}
+
+  \vspace*{-2mm}
+
+  \begin{block}{Blocks of sequential code running concurrently and sharing memory:}
+    
+  \begin{itemize}
+    \item What is Scala?
+    \item Concurrency in Java and its memory model
+    \item Basic concurrency blocks and libraries
+    % \item Futures and promises
+    \item \textcolor{gray}{\emph{Futures and Promises}}
+    \item \textcolor{gray}{\emph{Data-Parallel Collections}}
+    \item \textcolor{gray}{\emph{Reactive Programming (Concurrently)}}
+    \item \textcolor{gray}{\emph{Software Transactional Memory}}
+    \alert{\item Actor model}
+  \end{itemize}
+  \end{block}
+\end{frame}
+
+
+
+% \fromBookW[scale=0.7]{32}{98mm}{39mm}
+% \fromBook[scale=0.65]{32}{43mm}{98mm}{43mm}{39mm}
+
+% \begin{frame}[fragile]\frametitle{Current thread}
+% ~\\[-8mm]
+% \begin{columns}
+% \begin{column}{0.49\textwidth}
+% \begin{lstlisting}
+% ...
+% \end{lstlisting}
+% \end{column}
+% \begin{column}{0.49\textwidth}
+% ...
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+
+\begin{frame}\frametitle{What is the actor model}
+  \splittwo{0.4}{0.6}{
+    \begin{itemize}
+      \item \alert{Asynchronous} message exchange between actors
+      \item Introduced in \alert{Erlang}\\(we use Akka's actor library)\\~
+      \item<2> Active, autonomous, \alert{no shared memory}, no synchronisation
+    \end{itemize}
+  }{
+    \centering
+    \includegraphics[scale=1]{src/img/actor.pdf}\\
+    \only<2>{\includegraphics[scale=1]{src/img/actor-com.pdf}}
+  }
+\end{frame}
+
+\begin{frame}[t]\frametitle{What we will see}
+
+  We will use the Akka framework for actors for:
+  \begin{itemize}
+    \item Declaring \alert{actor classes} and creating \alert{actor instances}
+    \item Modelling \alert{actor state} and complex \alert{actor behaviours}
+    \item Manipulating the \alert{actor hierarchy} and the \alert{actor lifecycle}
+    \item The different message-passing patterns used in \alert{actor communication}
+    \item Error recovery using the built-in \alert{actor supervision} mechanism
+    \item Using \alert{remote actors} to build concurrent and distributed programs
+  \end{itemize}
+
+
+\end{frame}
+
+\section{...}
+
+
+\end{document}
