@@ -205,6 +205,7 @@
  ,plotmarks
 % ,pgfplots.groupplots
  ,decorations.markings
+ ,shadows
 }
 % \tikzset{shorten >=1pt,node distance=2cm,on grid,auto,initial text={},inner sep=2pt}
 \tikzstyle{aut}=[shorten >=1pt,node distance=2cm,on grid,auto,initial text={},inner sep=2pt]
@@ -227,6 +228,20 @@
   \node[fit=(top)(box.north west)(box.north east),inner sep=0pt,fill=black!15](title){};
   \node[blue!60!cyan,right] at(title.west){\textbf{{\footnotesize #2}}};
   \node[fit=(title)(box),draw=black,inner sep=0pt]{};
+}}
+
+%%% frame for pictures [graphics-options]{content}
+\newcommand{\includegraphicsframed}[2][]{\tikz{
+  \node[below,inner sep=1mm,fill=barcolor,%xshift=2mm,
+    draw=black,
+    drop shadow={
+      top color=gray,
+      bottom color=white,
+      %fill=gray,
+      opacity=0.2,
+      shadow xshift=4pt,
+      shadow yshift=-3pt
+    }](box){\includegraphics[#1]{#2}};
 }}
 
 
