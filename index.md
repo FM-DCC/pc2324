@@ -70,18 +70,18 @@ Distributed evaluation with final exam
 
 |designation | Weight (%)|
 |------------|-----------|
-|Exam |60,00|
-|Assignment | 40,00|
+|Exam |70,00|
+|Assignment | 30,00|
 
 
-### Amount of time allocated to each course unit
+<!-- ### Amount of time allocated to each course unit
 
 |designation | Time (hours)|
 |------------|-------------|
 |Home study | 56,00|
 |Attendance time | 56,00|
 |Assignment | 56,00|
-|**Total:** | 162,00|
+|**Total:** | 162,00| -->
 
 
 # Eligibility for exams

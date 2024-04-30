@@ -81,7 +81,7 @@
     \end{itemize}
   }{
     \centering
-    \includegraphicsframed[scale=1]{src/img/actor.pdf}\\
+    \includegraphicsframed[scale=1]{src/img/actor.pdf}\\~\\
     \only<2>{\includegraphicsframed[scale=1]{src/img/actor-com.pdf}}
   }
 \end{frame}
@@ -101,7 +101,88 @@
 
 \end{frame}
 
-\section{...}
+
+\section{Creating actors}
+
+\begin{frame}[t]\frametitle{Core concepts}
+    
+  \splittwo{0.5}{0.5}{
+    \begin{exampleblock}{Actor system}
+      Hierarchical group of actors with shared configurations, supporting actor creation and logging.
+    \end{exampleblock}
+
+    \begin{exampleblock}{Actor class}
+      Template that describes the states and behaviour of an actor, used to create instances.
+    \end{exampleblock}
+
+    \begin{exampleblock}{Actor instance}
+      Entity that exists at runtime, with a state and capable of sending and receiving messages.
+    \end{exampleblock}
+
+    \begin{exampleblock}{Message}
+      Unit of communication that actors use to communicate. In Akka, any object can be a message.
+    \end{exampleblock}
+  }{
+    \begin{exampleblock}{Mailbox}
+      Memory block that is used to buffer messages for a given actor instance.
+    \end{exampleblock}
+
+    \begin{exampleblock}{Actor reference}
+      Object that allows an object to send messages to a specific actor instance.
+    \end{exampleblock}
+
+    \begin{exampleblock}{Dispatcher}
+      Component that decides when actors are allowed to process messages. In Akka every dispatcher is also an execution context.
+    \end{exampleblock}
+  }
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{My first actor in Akka}
+~\\[-8mm]
+\begin{columns}
+\begin{column}{0.56\textwidth}
+\begin{lstlisting}[emph={Actor, Logging, receive, system,stop}]
+import akka.actor._
+import akka.event.Logging
+
+class HelloActor(val hello: String) extends Actor {
+  val log = Logging(context.system, this)
+  def receive = {
+    case `hello` =>
+      log.info(s"Received a '$hello'... $hello!")
+    case msg     =>
+      log.info(s"Unexpected message '$msg'")
+      context.stop(self)
+  }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.44\textwidth}
+\begin{itemize}
+  \item Each \texttt{HelloActor} receives messages
+  \item ... if it receives its \code{hello}, it logs and \structure{continues}
+  \item ... if it receives something else, it \structure{stops}
+  \item \code{context} -- provides core functions, such as \code{stop}
+  \item \code{self} -- is the instance's actor reference
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\section{Modelling actor behaviour}
+
+
+\section{Actor hierarchy and lifecycle}
+
+
+\section{Message-passing patterns}
+
+
+\section{Error recovery with actors}
+
+
+\section{Remote actors}
 
 
 \end{document}
