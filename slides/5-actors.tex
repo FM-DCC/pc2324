@@ -2,7 +2,6 @@
 \usepackage{etex} % fixes new-dimension error
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
-
 \usepackage{graphicx,amsmath}
 \usepackage{stmaryrd} % cf. interleave
 \usepackage{booktabs}
@@ -105,7 +104,7 @@
 \section{Creating actors}
 
 \begin{frame}[t]\frametitle{Core concepts}
-    
+  ~\\[-8mm]    
   \splittwo{0.5}{0.5}{
     \begin{exampleblock}{Actor system}
       Hierarchical group of actors with shared configurations, supporting actor creation and logging.
@@ -137,7 +136,7 @@
   }
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{My first actor in Akka}
+\begin{frame}[fragile]\frametitle{My first actor (class) in Akka}
 ~\\[-8mm]
 \begin{columns}
 \begin{column}{0.56\textwidth}
@@ -149,9 +148,11 @@ class HelloActor(val hello: String) extends Actor {
   val log = Logging(context.system, this)
   def receive = {
     case `hello` =>
-      log.info(s"Received a '$hello'... $hello!")
+      log.info(
+        s"Received a '$hello'... $hello!")
     case msg     =>
-      log.info(s"Unexpected message '$msg'")
+      log.info(
+        s"Unexpected message '$msg'")
       context.stop(self)
   }
 }
@@ -159,19 +160,157 @@ class HelloActor(val hello: String) extends Actor {
 \end{column}
 \begin{column}{0.44\textwidth}
 \begin{itemize}
-  \item Each \texttt{HelloActor} receives messages
-  \item ... if it receives its \code{hello}, it logs and \structure{continues}
+  \item Each \cod{HelloActor} receives messages
+  \item ... if it receives its \cod{hello}, it logs and \structure{continues}
   \item ... if it receives something else, it \structure{stops}
-  \item \code{context} -- provides core functions, such as \code{stop}
-  \item \code{self} -- is the instance's actor reference
+  \item \cod{context} -- provides core functions, such as \cod{stop}
+  \item \cod{self} -- is the instance's actor reference
 \end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
 
 
+\begin{frame}[fragile]\frametitle{Configuring an actor in Akka}
+~\\[-6mm]
+\begin{columns}
+\begin{column}{0.51\textwidth}
+\begin{lstlisting}[emph={Actor, Logging, Props}]
+object HelloActor { // companion
+  // two factory methods below
+  def props(hello: String) =
+    Props(new HelloActor(hello))
+  def propsAlt(hello: String) =
+    Props(classOf[HelloActor], hello)
+  //def propsAlt2 = Props[HelloActor]
+}
+\end{lstlisting}
+\begin{exampleblock}{Actor configuration}
+  \begin{itemize}
+      \item actor class
+      \item constructor arguments
+      \item mailbox
+      \item dispatcher
+  \end{itemize} 
+\end{exampleblock}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{block}{Props}
+  \begin{itemize}
+    \item can receive a block of code,
+     used each time a new actor instance is created;
+     \item can receive a \cod{Class} object and its arguments
+     \item can be sent over the network (should be self-contained)
+     \item avoid creating \cod{Props} in the actor class, and use factory methods instead
+  \end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{My first actor system with an instance}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem}]
+lazy val ourSystem = ActorSystem("OurExampleSystem")
+\end{lstlisting}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf}]
+object ActorsCreate extends App {
+  val hiActor: ActorRef =
+    ourSystem.actorOf(HelloActor.props("ola"), name = "greeter")
+  hiActor ! "ola"
+  Thread.sleep(1000)
+  hiActor ! "hi"
+  Thread.sleep(1000)
+  ourSystem.shutdown()
+}
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Unhandled messages?}
+
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive,unhandled}]
+class DeafActor extends Actor {
+  val log = Logging(context.system, this)
+  def receive = PartialFunction.empty
+  override def unhandled(msg: Any) = msg match {
+    case msg: String => log.info(s"I do not hear '$msg'")
+    case msg         => super.unhandled(msg)
+  }
+}
+\end{lstlisting}
+    
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf}]
+object ActorsUnhandled extends App {
+  val deafActor: ActorRef =
+    ourSystem.actorOf(Props[DeafActor], name = "deafy")
+  deafActor ! "ola"
+  Thread.sleep(1000)
+  deafActor ! 1234
+  Thread.sleep(1000)
+  ourSystem.shutdown()
+}
+\end{lstlisting}
+\end{frame}
+
+
 \section{Modelling actor behaviour}
 
+\begin{frame}[fragile]\frametitle{My 2nd example in Akka: a (stateful) countdown}
+~\\[-6mm]
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\only<2>{\alert{Not allowed in Akka:}}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive}]
+class CountdownActor extends Actor{
+  var n = 10
+            // never do this
+  def receive = if (n > 0) {
+    case "count" =>
+      log(s"n = $n")
+      n -= 1
+  } else PartialFunction.empty
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.52\textwidth}
+\pause
+\alert{Correct in Akka, using \cod{become}:}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive,become}]
+class CountdownActor extends Actor {
+  val log = Logging(context.system, this)
+  var n = 10
+  def counting: Actor.Receive = {
+    case "count" =>
+      n -= 1
+      log.info(s"n = $n")
+      if (n == 0) context.become(done)
+  }
+  def done = PartialFunction.empty
+  def receive = counting
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}\frametitle{Actor as a transition system}
+  \centering
+  \fromBookW[scale=0.7]{278}{126mm}{43mm}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Running the countdown}
+
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive,become}]
+object ActorsCountdown extends App {
+  val countdown = ourSystem.actorOf(Props[CountdownActor])
+  for (i <- 0 until 20) countdown ! "count"
+  Thread.sleep(1000)
+  ourSystem.shutdown()
+}
+\end{lstlisting}
+
+
+\end{frame}
 
 \section{Actor hierarchy and lifecycle}
 

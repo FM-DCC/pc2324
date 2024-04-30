@@ -311,6 +311,7 @@
 }
 
 \newcommand{\code}[1]{{\relsize{-1}\ttfamily #1}}
+\newcommand{\cod}[1]{{\relsize{-0.5}\color{blue!75!black}\ttfamily #1}}
 % \definecolor{mydarkgreen}{rgb}{0,0.6,0}
 % \newcommand{\bash}[1]{\lstinline[basicstyle=\ttfamily\relsize{-0.5}\color{mydarkgreen},keywordstyle=\bf\sffamily\color{purple},columns=fullflexible,keepspaces,literate=*]|#1|}
 
@@ -345,6 +346,22 @@
 \addtocounter{mypage}{#2}
 \begin{tabular}{@{}r@{}}
 \includegraphics[page=\themypage, trim = 20mm #3 20mm #4, clip, #1]%
+  {../../learning-concurrent-scala/learning-concurrent-programming-in-scala.pdf}
+  \\[-2mm]
+  \textcolor{myGray}{$\left[\begin{array}{@{}r@{}}
+  ~\\[-7mm]
+  \text{{\tiny in \emph{``Learning Concurrent}
+                      \emph{Programming in Scala''}, pg.\,#2}}
+  \\[0mm]
+  \end{array}\right]$}
+\end{tabular}
+}
+
+\newcommand{\fromBookWframed}[4][width=\textwidth]{
+\setcounter{mypage}{20}
+\addtocounter{mypage}{#2}
+\begin{tabular}{@{}r@{}}
+\includegraphicsframed[page=\themypage, trim = 20mm #3 20mm #4, clip, #1]%
   {../../learning-concurrent-scala/learning-concurrent-programming-in-scala.pdf}
   \\[-2mm]
   \textcolor{myGray}{$\left[\begin{array}{@{}r@{}}
