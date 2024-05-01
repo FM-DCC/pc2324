@@ -74,6 +74,7 @@ These methods have similar semantics as before, but go into the waiting state in
 \end{myExercise}
 
 \begin{myExercise}A \code{SyncVar} object can hold at most one value at a time. Implement a \code{SyncQueue} class, which has the same interface as the \code{SyncVar} class, but can hold at most \code{n} values. The \code{n} parameter is specified in the constructor of the \code{SyncQueue} class.
+\note[Suggestion]{use the \texttt{scala.collection.mutable.Queue} data structure.}
 \end{myExercise}
 
 \begin{myExercise}The \code{send} method in the Deadlocks' slides was used to transfer money between the two accounts. The \code{sendAll} method takes a set accounts of bank accounts and a target bank account, and transfers all the money from every account in \code{accounts} to the target bank account. The \code{sendAll} method has the following signature:
