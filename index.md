@@ -35,6 +35,11 @@ The goal of this course is to introduce students to the fundamental theoretic an
 4. [Exercises on building blocks of concurrency](exercises/ex-concblocks.pdf)
 5. ...
 
+### Assignment
+
+- [Practical assignment on Concurrent Programming 2023/24](exercises/cp-assignment-2324.pdf)
+
+
 ### Main book
 
 - [Learning Concurrent Programming in Scala](https://www.amazon.com/Learning-Concurrent-Programming-Scala-Second-dp-1786466899/dp/1786466899/ref=dp_ob_title_bk), _Aleksandar Prokopec_; ISBN: 1786466899
@@ -93,7 +98,7 @@ Students must attend at least 75% of the practical classes to be admitted to the
 
 Distributed evaluation will include both modelling (EM) and program implementation (EI). The final grade (FG) is obtained by weighting the distributed assessment scores and final exam (FE) as follows:
 
- - __FG__ = 4 * EM + 4 * EI + 12 * FE.
+ - __FG__ = 3 * EM + 3 * EI + 14 * FE.
 
 
 # Lecturers
