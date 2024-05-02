@@ -304,7 +304,7 @@ object AtomicUid extends App {
 \begin{lstlisting}[emph={execute,sleep,log,Long,synchronized}]
 def compareAndSet(ov: Long, nv: Long):
           Boolean = this.synchronized {
-    if (this.get == ov) false else {
+    if (this.get != ov) false else {
       this.set(nv)
       true
   } }
@@ -313,7 +313,7 @@ def compareAndSet(ov: Long, nv: Long):
 \begin{lstlisting}[emph={execute,sleep,log,T,synchronized}]
 def compareAndSet(ov: T, nv: T):
           Boolean = this.synchronized {
-  if (this.get eq ov) false else {
+  if (!(this.get eq ov)) false else {
     this.set(nv)
     true
 } }
@@ -479,7 +479,7 @@ private def prepareForDelete(entry: Entry): Boolean = {
 }
 \end{lstlisting}
 
-\code{logMessage}: presented later -- similar to \code{log}, but stores the log message
+\cod{logMessage}: presented later -- similar to \cod{log}, but stores the log message
 \end{frame}
 
 
@@ -488,7 +488,7 @@ private def prepareForDelete(entry: Entry): Boolean = {
 
 \bigskip
 
-Illustrated by a bad acquire-release for \code{Copying}, using a mutable \code{n} in:
+Illustrated by a bad acquire-release for \cod{Copying}, using a mutable \cod{n} in:
 \\~~\alert{\texttt{Copying(\structure{var} n: Int)}}
 \end{frame}
 
@@ -514,7 +514,7 @@ def acquireCopy(e: Entry, c: Copying) = e.state.get match {
     if (!e.state.compareAndSet(oc, c)) acquireCopy(e, c)
 }
 \end{lstlisting}
-Optimization: reusing previous \code{Copying} if possible
+Optimization: reusing previous \cod{Copying} if possible
 \end{frame}
 
 
@@ -525,8 +525,8 @@ Optimization: reusing previous \code{Copying} if possible
 
 \begin{frame}\frametitle{Some guidelines to avoid the ABA problem}
   \begin{itemize}
-    \item use fresh objects in \code{AtomicReference}
-    \item use immutable objects in \code{AtomicReference}
+    \item use fresh objects in \cod{AtomicReference}
+    \item use immutable objects in \cod{AtomicReference}
     \item avoid re-assigning the same value to an atomic variable
     \item only increment or decrement values of numeric atomic variables (if possible)
   \end{itemize}
