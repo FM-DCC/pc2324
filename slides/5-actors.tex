@@ -312,8 +312,157 @@ object ActorsCountdown extends App {
 
 \end{frame}
 
+
 \section{Actor hierarchy and lifecycle}
 
+\begin{frame}[fragile]\frametitle{New example with a parent}
+
+\begin{columns}
+\begin{column}{0.47\textwidth}
+~\\[1mm]
+\centering
+\begin{tikzpicture}
+  \tikzstyle{nd}=[rectangle,inner sep=4pt,minimum width=10mm,draw=black!60,fill=barcolor!20,very thick]
+  \node[nd,draw=none,fill=none,inner sep=1pt](sys){``OurExampleSystem''};
+  \node[nd, below=2mm of sys](par){``parent''};
+  \node[nd, below=2mm of par,xshift=-12mm](a){child$_1$};
+  \node[nd, below=2mm of par,xshift= 12mm](b){child$_2$};
+  \draw[<-,thick] (sys)edge(par) (par)edge(a)edge(b); 
+\end{tikzpicture}
+
+\pause
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,context,actorOf,receive}]
+class ChildActor extends Actor {
+  val log = Logging(context.system, this)
+  def receive = {
+    case "sayhi" =>
+      val parent = context.parent
+      log.info(s"my parent $parent made me say hi!")
+  }
+  override def postStop() {
+    log.info("child stopped!")
+  }
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.54\textwidth}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive,become,context}]
+class ParentActor extends Actor {
+  val log = Logging(context.system, this)
+  def receive = {
+    case "create" =>
+      context.actorOf(Props[ChildActor])
+      log.info(s"created a kid; children = ${context.children}")
+    case "sayhi" =>
+      log.info("Kids, say hi!")
+      for (c <- context.children) c ! "sayhi"
+    case "stop" =>
+      log.info("parent stopping")
+      context.stop(self)
+  }
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{A more complete view of the hierarchy}
+~\\[-6mm]
+\begin{columns}
+\begin{column}{0.57\textwidth}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive}]
+object ActorsHierarchy extends App {
+  val parent = ourSystem.actorOf(Props[ParentActor], "parent")
+  parent ! "create"
+  parent ! "create"
+  Thread.sleep(1000)
+  parent ! "sayhi"
+  Thread.sleep(1000)
+  parent ! "stop"
+  Thread.sleep(1000)
+  ourSystem.shutdown()
+}\end{lstlisting}
+\end{column}
+\begin{column}{0.41\textwidth}
+  \fromBook[scale=0.6]{284}{46mm}{30mm}{46mm}{143mm}
+  ~\\
+  \splittwo{0.5}{0.5}{
+      - ActorSystem
+    \\- sys.shutdown
+    \\- sys/ctxt.actorOf
+    \\
+  }{
+      - ctxt.stop
+    \\- ctxt.become
+    \\- ctxt.children
+    \\- ctxt.parent
+  }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{A more complete view of the hierarchy}
+~\\[-6mm]
+\begin{columns}
+\begin{column}{0.57\textwidth}
+\begin{itemize}
+  \item \alert{parent} actor stops $\Rightarrow$ its \alert{children} stop
+  \item \structure{user} and \structure{system}:
+    \\ are \alert{guardian actors} -- at the top of the hierarchy, to log, restart actors, etc.
+  \item hierarchy visible when printing an actor ref, e.g., for the first child;
+    \\\code{akka://OurExampleSystem/user/parent/}\texttt{\$}\code{a}
+  \item \pause \alert{Next:}
+    \cod{ctxt.actorSelection(path)}
+\end{itemize}
+\end{column}
+\begin{column}{0.41\textwidth}
+  \fromBook[scale=0.6]{284}{46mm}{30mm}{46mm}{143mm}
+  ~\\
+  \splittwo{0.5}{0.5}{
+      - ActorSystem
+    \\- sys.shutdown
+    \\- sys/ctxt.actorOf
+    \\
+  }{
+      - ctxt.stop
+    \\- ctxt.become
+    \\- ctxt.children
+    \\- ctxt.parent
+  }
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Discovering actors in the hierarchy}
+
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive,Identify,actorSelection}]
+class CheckActor extends Actor {
+  val log = Logging(context.system, this)
+  def receive = {
+    case path: String =>
+      log.info(s"checking path $path")
+      context.actorSelection(path) ! Identify(path)
+    case ActorIdentity(path, Some(ref)) =>
+      log.info(s"found actor $ref at $path")
+    case ActorIdentity(path, None) =>
+      log.info(s"could not find an actor at $path")
+  }
+}
+\end{lstlisting}    
+
+\pause
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,shutdown,sleep,actorOf,receive,Identify,actorSelection}]
+val checker = ourSystem.actorOf(Props[CheckActor], "checker")
+
+checker ! "../*"      // finds the checker and its siblings
+checker ! "../../*"   // finds user and system guardians
+checker ! "/system/*" // finds internal actors
+checker ! "/user/checker2" // logs that no actors were found
+\end{lstlisting}
+\end{frame}
 
 \section{Message-passing patterns}
 
