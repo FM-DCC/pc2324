@@ -75,6 +75,9 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4"
+  ,"com.typesafe.akka" %% "akka-actor" % "2.8.5"
+  ,"com.typesafe.akka" %% "akka-remote" % "2.8.5"
+)
 )
 \end{lstlisting}
 If you are in the SBT shell and you modify the \bash{build.sbt} you need to reload it:
