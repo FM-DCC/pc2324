@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\setLecture{5}{Actor model using the Akka framework}
+\setLecture{5}{Actor model using the Akka framework (WiP)}
 
 
 \section{Overview}
@@ -562,7 +562,7 @@ Different formalisations for global beh.:
 }
 \end{frame}
 
-\begin{frame}[t]\frametitle{Sending x,y, and z}
+\begin{frame}[t]\frametitle{Diamond problem: sending by two routes}
     
     $A\to B: x;$\\
     $A\to C: y;$\\
@@ -765,7 +765,104 @@ children ! "kaboom".toList    // naughty and super throw exception
 \end{lstlisting}
 \end{frame}
 
+
 \section{Remote actors over TCP}
+
+\begin{frame}[fragile]\frametitle{Compilation with remote actors}
+~\\[-6.5mm]
+\begin{tabular}{ll}
+\begin{minipage}{0.18\textwidth}
+ \cod{build.sbt} needs to import akka-remote:
+\end{minipage}
+&
+\begin{minipage}{0.82\textwidth}
+\begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive,become,stop}]
+libraryDependencies ++= Seq(
+   ...
+  ,"com.typesafe.akka" %% "akka-actor" % "2.8.5"
+  ,"com.typesafe.akka" %% "akka-remote" % "2.8.5"
+)
+\end{lstlisting}
+\end{minipage}
+\\
+\begin{minipage}{0.18\textwidth}
+  Network configured with Netty library
+\end{minipage}
+&
+\begin{minipage}{0.82\textwidth}
+\begin{lstlisting}[
+  showstringspaces=false,
+  emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive,become,stop,remotingConfig,remotingSystem}]
+import com.typesafe.config._
+def remotingConfig(port: Int) = ConfigFactory.parseString(s"""
+  akka {
+    actor.provider = "akka.remote.RemoteActorRefProvider"
+    remote {
+      enabled-transports = ["akka.remote.netty.tcp"]
+      netty.tcp {
+        hostname = "127.0.0.1"
+        port = $port }
+    }
+  }""")
+def remotingSystem(name: String, port: Int): ActorSystem =
+     ActorSystem(name, remotingConfig(port))
+\end{lstlisting}
+\end{minipage}
+% \end{itemize}
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Remote Pingy-Pongy -- running two Apps!}
+~\\[-6mm]
+\begin{columns}[t]
+\begin{column}{0.46\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive, watch,stop,Terminated}]
+object RemotingPongySystem extends App {
+  val system = remotingSystem("PongyDimension", 24321)
+  val pongy = system.actorOf(Props[Pongy], "pongy")
+  Thread.sleep(15000)
+  system.terminate()
+}
+\end{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,
+  emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive, watch,stop,Terminated}]
+object RemotingPingySystem extends App {
+  val system = remotingSystem("PingyDimension", 24567)
+  val runner = system.actorOf(Props[Runner], "runner")
+  runner ! "start"
+  Thread.sleep(5000)
+  system.terminate()
+}
+\end{lstlisting}
+\end{column}
+\begin{column}{0.54\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,
+  emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive,become,stop}]
+class Runner extends Actor {
+  val log = Logging(context.system, this)
+  val pingy = context.actorOf(Props[Pingy], "pingy")
+  def receive = {
+    case "start" =>
+      val pongySys = "akka.tcp://PongyDimension@127.0.0.1:24321"
+      val pongyPath = "/user/pongy"
+      val url = pongySys + pongyPath
+      val selection = context.actorSelection(url)
+      selection ! Identify(0)
+    case ActorIdentity(0, Some(ref)) =>
+      pingy ! ref
+    case ActorIdentity(0, None) =>
+      log.info("Something's wrong - ain't no pongy anywhere!")
+      context.stop(self)
+    case "pong" =>
+      log.info("got a pong from another dimension.")
+      context.stop(self)
+  }
+}
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
 
 
 \end{document}

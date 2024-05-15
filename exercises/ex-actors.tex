@@ -1,0 +1,88 @@
+\documentclass[11pt]{article}
+
+\renewcommand\familydefault{\sfdefault}
+
+
+\input{macros/preamble}
+\input{macros/slides-macros}
+\input{macros/macros}
+\usepackage{url}
+% \input{macros/tp-macros}
+
+\setHeader{4. Exercises: Actor model (WiP)}%
+ {Concurrent Programming -- Part 2}%
+
+
+
+
+\begin{document}
+
+\myHeader
+
+These exercises are taken mainly from the book ``\emph{Learning Concurrent Programming in Scala}'', to test the understanding over the actor programming model in Akka.
+%The following exercises test your understanding of the actor programming model, and distributed programming in general. The first few exercises are straightforward, and deal with the basics of the actor API in Akka. Subsequent exercises are more involved, and go deeper into the territory of fault-tolerant distributed programming. 
+Try to solve these exercises by first assuming that no machines fail, and then consider what happens if some of the machines fail during the execution of the program:
+
+\begin{myExercise}
+Implement the timer actor with the \code{TimerActor} class. After receiving a \code{Register} message containing the \code{t} timeout in milliseconds, the timer actor sends a \code{Timeout} message back after \code{t} milliseconds. The timer must accept multiple \code{Register} messages.
+\end{myExercise}
+
+\begin{myExercise}
+Recall the bank account example from the slides on Java's memory model in the theoretical lessons. Implement different bank accounts as separate actors, represented by the \code{AccountActor} class. When an \code{AccountActor} class receives a \code{Send} message, it must transfer the specified amount of money to the target actor. What will happen if either of the actors receives a \code{Kill} message at any point during the money transaction?
+\end{myExercise}
+
+\begin{myExercise}
+Implement the \code{SessionActor} class for actors that control access to other actors:
+\begin{lstlisting}
+class SessionActor(password: String, r: ActorRef)
+extends Actor {
+  def receive = ???
+}
+\end{lstlisting}
+After the \code{SessionActor} instance receives the \code{StartSession} message with the correct password, it forwards all the messages to the actor reference \code{r}, until it receives the \code{EndSession} message. Use behaviours to model this actor.
+\end{myExercise}
+
+\begin{myExercise}
+Use actors to implement the \code{ExecutionContext} interface, described in the slides over traditional concurrency blocks.
+\end{myExercise}
+
+\begin{myExercise}
+Implement the \code{FailureDetector} actor, which sends \code{Identify} messages to the specified actors every \code{interval} seconds. If an actor does not reply with any \code{ActorIdentity} messages within \code{threshold} seconds, the \code{FailureDetector} actor sends a \code{Failed} message to its parent actor, which contains the actor reference of the failed actor.
+\end{myExercise}
+
+% \begin{myExercise}
+% A distributed hash map is a collection distributed across multiple computers, each of which contains part of the data, called a shard. When there are $2^n$ shards, the first \code{n} bits of the hash code of the key are used to decide which shard a key-value pair should go to. Implement the distributed hash map with the \code{DistributedMap} class:
+% \begin{lstlisting}
+% class DistributedMap[K, V](shards: ActorRef*) {
+%   def update(key: K, value: V): Future[Unit] = ???
+%   def get(key: K): Future[Option[V]] = ???
+% }
+% \end{lstlisting}
+% The \code{DistributedMap} class takes a list of actor references to the \code{ShardActor} instances, whose actor template you also need to implement. You might assume that the length of the shards list is a power of two. The update and get methods are asynchronous, and return the result in a future object.
+% \end{myExercise}
+
+% \begin{myExercise}
+% Implement a \code{BroadcastActor} trait, which defines the \code{broadcast} method:
+% \begin{lstlisting}
+% def broadcast(refs: ActorRef*)(msg: Any): Unit = ???
+% \end{lstlisting}
+% The \code{broadcast} method sends the \code{msg} message to all the actors specified in the \code{refs} list. The actor invoking the \code{broadcast} method might, for reasons such as power loss, fail at any point during the execution of the \code{broadcast} method. Nevertheless, the \code{broadcast} method must have reliable delivery: if at least one actor from the \code{refs} list receives the \code{msg} message, then all the actors from the \code{refs} list must eventually receive \code{msg}.
+% \end{myExercise}
+
+\begin{myExercise}
+Implement a \code{FlowRateActor} class for an actor that forwards incoming messages to a target actor. This actor must ensure that the number of messages forwarded per second does not exceed a rate specified in its constructor.
+\end{myExercise}
+
+\begin{myExercise}
+Implement a \code{Sequencer} actor, which forwards messages to the target actor. If the message is a two-element tuple where the first element is a \code{Long} value, then the \code{Long} value is interpreted as a sequence number. All such messages must be forwarded in the proper sequence number order, starting from number 0.
+\end{myExercise}
+
+% \begin{myExercise}
+% Implement a \code{MasterWorker[T]} actor that, given a number of worker parameters, creates a set of worker actors and forwards task messages of type \code{() => T} to those workers. When the worker actors complete a task, they send the result back to the \code{MasterWorker} actor, which sends the reply back to the client actor that originally sent the task.
+% \end{myExercise}
+
+
+
+
+
+\end{document}
