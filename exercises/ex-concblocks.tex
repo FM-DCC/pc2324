@@ -25,7 +25,7 @@ Most of these require implementing new concurrent data structures using atomic v
 
 
 \begin{myExercise}
-Implement a custom \code{ExecutionContext} class called \code{PiggybackContext}, which executes \code{Runnable} objects on the same thread that calls the \code{execute} method. Ensure that a \code{Runnable} object executing on the \code{PiggybackContext} can also call the \code{execute} method and that exceptions are properly reported.
+Implement a custom \code{ExecutionContext} class\footnote{\url{https://www.scala-lang.org/api/2.13.3/scala/concurrent/ExecutionContext.html}} called \code{PiggybackContext}, which executes \code{Runnable} objects on the same thread that calls the \code{execute} method. Ensure that a \code{Runnable} object executing on the \code{PiggybackContext} can also call the \code{execute} method and that exceptions are properly reported.
 \end{myExercise}
 
 \begin{myExercise}
@@ -45,7 +45,9 @@ Implement a \code{ConcurrentSortedList} class, which implements a concurrent sor
 class ConcurrentSortedList[T](implicit val ord: Ordering[T]) {
   def add(x: T): Unit = ???
   def iterator: Iterator[T] = ???
-}
+  ...
+  case class Node(head:T, tail: AtomicReference[...])
+ }
 \end{lstlisting}
 Under the hood, the \code{ConcurrentSortedList} class should use a (manually created) linked list of atomic references by inserting elements in the right position. Ensure that your implementation is lock-free and avoids ABA problems.
 The \code{Iterator} object returned by the iterator method must correctly traverse the elements of the list in ascending order under the assumption that there are no concurrent invocations of the add method.
