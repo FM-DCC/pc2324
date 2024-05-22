@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\setLecture{5}{Actor model using the Akka framework (WiP)}
+\setLecture{5}{Actor model using the Akka framework}
 
 
 \section{Overview}
@@ -779,7 +779,7 @@ children ! "kaboom".toList    // naughty and super throw exception
 \begin{lstlisting}[emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive,become,stop}]
 libraryDependencies ++= Seq(
    ...
-  ,"com.typesafe.akka" %% "akka-actor" % "2.8.5"
+  ,"com.typesafe.akka" %% "akka-actor" % "2.8.5" // or older
   ,"com.typesafe.akka" %% "akka-remote" % "2.8.5"
 )
 \end{lstlisting}
@@ -817,7 +817,7 @@ def remotingSystem(name: String, port: Int): ActorSystem =
 ~\\[-6mm]
 \begin{columns}[t]
 \begin{column}{0.46\textwidth}
-\begin{lstlisting}[basicstyle=\ttfamily\tiny,emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive, watch,stop,Terminated}]
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,emph={Actor, pingy, pongy, runner, Logging, Props, ourSystem,terminate,sleep,actorOf,receive, watch,stop,Terminated}]
 object RemotingPongySystem extends App {
   val system = remotingSystem("PongyDimension", 24321)
   val pongy = system.actorOf(Props[Pongy], "pongy")
@@ -826,7 +826,7 @@ object RemotingPongySystem extends App {
 }
 \end{lstlisting}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny,
-  emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive, watch,stop,Terminated}]
+  emph={Actor, pingy, pongy, runner, Logging, Props, ourSystem,terminate,sleep,actorOf,receive, watch,stop,Terminated}]
 object RemotingPingySystem extends App {
   val system = remotingSystem("PingyDimension", 24567)
   val runner = system.actorOf(Props[Runner], "runner")
@@ -838,7 +838,7 @@ object RemotingPingySystem extends App {
 \end{column}
 \begin{column}{0.54\textwidth}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny,
-  emph={Actor, Logging, Props, ourSystem,terminate,sleep,actorOf,receive,become,stop}]
+  emph={Actor, pingy, pongy, runner, Logging, Props, ourSystem,terminate,sleep,actorOf,receive,become,stop}]
 class Runner extends Actor {
   val log = Logging(context.system, this)
   val pingy = context.actorOf(Props[Pingy], "pingy")
@@ -864,5 +864,55 @@ class Runner extends Actor {
 \end{columns}
 \end{frame}
 
+\begin{frame}[t]\frametitle{Running the multi-dimensional Pingy-Pongy}
+
+\begin{itemize}
+  \item Start the \cod{RemotingPongySystem}
+  \item Start the \cod{RemotingPingySystem} within 15 sec.
+  \item Use different SBT instances
+  \item Runner in \cod{PingyDimension} should get a ``pong'' soon
+\end{itemize}
+    
+\pause
+\begin{block}{Deployment logic vs. Application logic}
+  \begin{itemize}
+    \item Deployment log.: setting up network communication
+    \item Application log.: interactions between agents
+    \item These should be kept in separate
+    \item In our example, \cod{Runner} handles deployment logic
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[c]\frametitle{Wrapping up remote actors}
+  \begin{exampleblock}{Steps for handling remote actors}    
+    \begin{itemize}
+      \item \alert{Declaring} each actor system with appropriate remoting configuration
+      \item \alert{Starting} each actor system in separate processes or on separate machines
+      \item \alert{Obtain actor references} by using actor path selection
+      \item \alert{Transparently send messages} by using these actor references
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[t]\frametitle{Wrapping up Actors}
+    % We used the Akka framework for actors for:
+    \begin{itemize}
+      \item Declare \alert{actor classes} and create \alert{actor instances}
+      \item Model \alert{actor state} and complex \alert{actor behaviours}
+      \item Manipulate the \alert{actor hierarchy} and the \alert{actor lifecycle}
+      \item Use some message-passing patterns used in \alert{actor communication}
+      \item Use error recovery with the built-in \alert{actor supervision} mechanism
+      \item Use \alert{remote actors} to build concurrent and distributed programs
+    \end{itemize}
+
+  \splittwo{0.4}{0.6}{
+    ~\\~\\
+    Documentation: \url{https://doc.akka.io/docs/akka}
+  }{
+    \includegraphicsframed[scale=1]{src/img/actor-com.pdf}
+  }
+\end{frame}
 
 \end{document}
