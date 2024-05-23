@@ -581,10 +581,10 @@ $B$ must be ready to receive `$x?$' and `$z?$' by any order
 \begin{frame}[t]\frametitle{Stopping an actor}
 \begin{alertblock}{Main ways to stop an actor:}  
 \begin{itemize}
-  \item \cod{context.stop} -- stops all actors, once they finish processing their current message
-  \item \cod{Kill} message -- stops the target actor once it is received
+  \item \cod{context.stop(act)} -- \alert{stops} \cod{act} and its children, once it finishes processing their current message
+  \item \cod{Kill} message -- \alert{restarts} the target actor once it is received
     %once received, will restart the target actor without losing its mailbox
-  \item \cod{PoisonPill} message -- stops the target actor \structure{after} processing all the messages currently in its mailbox
+  \item \cod{PoisonPill} message -- \alert{stops} the target actor \structure{after} once it is processed
 \end{itemize}
 \end{alertblock}
 
