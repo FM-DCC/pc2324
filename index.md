@@ -37,6 +37,9 @@ The goal of this course is to introduce students to the fundamental theoretic an
 4. [Exercises on building blocks of concurrency](exercises/ex-concblocks.pdf)
 5. [Exercises on the actor model](exercises/ex-actors.pdf)
 
+### Previous tests
+- [Test in the normal season _(época normal)_](exercises/cp-test-normal24.pdf)
+
 ### Assignment
 
 - [Practical assignment on Concurrent Programming 2023/24](exercises/cp-assignment-2324.pdf)
