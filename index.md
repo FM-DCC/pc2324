@@ -38,7 +38,8 @@ The goal of this course is to introduce students to the fundamental theoretic an
 5. [Exercises on the actor model](exercises/ex-actors.pdf)
 
 ### Previous tests
-- [Test in the normal season _(época normal)_](exercises/cp-test-normal24.pdf)
+- [2023-2024 - Test for this second module (at _época normal_)](exercises/cp-test-normal24.pdf)
+- [2018-2019 - Test for the first module (authentication needed - during the semester)](https://www.dcc.fc.up.pt/~nam/Teaching/progcon2324/ligacoes/index.html)
 
 ### Assignment
 
